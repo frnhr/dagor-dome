@@ -4,10 +4,12 @@ int quadrature_H = 2;
 int led = 8; //debugging led
 int motor_up = 11;
 int motor_down = 12;
-int controller_up = 22;
-int controller_down = 24;
-int controller_open = 26;
-int controller_close = 28;
+int controller_up = 6; //controller pins
+int controller_down = 7;
+int controller_open = 4;
+int controller_close = 5;
+int switch_open = 23; //switch for door
+int switch_close = 25;
 int switch_one = A0; //1st mehanical switch
 int switch_two = A1; //1st mehanical switch
 int switch_three = A2; //1st mehanical switch
@@ -101,6 +103,12 @@ void setup() {
   pinMode(controller_down, INPUT);
   pinMode(controller_open, INPUT);
   pinMode(controller_close, INPUT);
+  
+  //door open/close switch:
+  pinMode(switch_open, INPUT_PULLUP);
+  digitalWrite(switch_open, HIGH);
+  pinMode(switch_close, INPUT_PULLUP);
+  digitalWrite(switch_close, HIGH);
 
   dome.home_azimuth = EEPROM_read_home(); //read home from EEPROM
   

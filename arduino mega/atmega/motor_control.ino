@@ -25,18 +25,12 @@ void motor_loop() {
     finish_screws();
   }
   
-  if((millis()-soft_end > end_time_min) && dome.route == 1) {
+  //rotate in desired direction... controller has main word
+  if((millis()-soft_end > end_time_min) && (digitalRead(controller_down) || soft_start_down>0)) {
     soft_end = 0;
-    
-    digitalWrite(motor_up, LOW);
-    digitalWrite(motor_down, HIGH);
-  } else if((millis()-soft_end > end_time_min) && dome.route == -1) {
-    soft_end = 0;
-    
-    digitalWrite(motor_up, HIGH);
-    digitalWrite(motor_down, LOW);
-  } else if((millis()-soft_end > end_time_min) && (digitalRead(controller_down) || soft_start_down>0)) {
-    soft_end = 0;
+    dome.route = 0;
+    calibration.in_progress = false;
+    calibration.cycles = 0;
     
     if(digitalRead(controller_down) && soft_start_down==0) {
       soft_start_down = millis();
@@ -48,12 +42,25 @@ void motor_loop() {
     digitalWrite(motor_down, HIGH);
   } else if((millis()-soft_end > end_time_min) && (digitalRead(controller_up) || soft_start_up>0)) {
     soft_end = 0;
+    dome.route = 0;
+    calibration.in_progress = false;
+    calibration.cycles = 0;
     
     if(digitalRead(controller_up) && soft_start_up==0) {
       soft_start_up = millis();
     } else if(!digitalRead(controller_up) && millis()-soft_start_up >= start_time_min) {
       soft_start_up = 0;
     }
+    
+    digitalWrite(motor_up, HIGH);
+    digitalWrite(motor_down, LOW);
+  } else if((millis()-soft_end > end_time_min) && dome.route == 1) {
+    soft_end = 0;
+    
+    digitalWrite(motor_up, LOW);
+    digitalWrite(motor_down, HIGH);
+  } else if((millis()-soft_end > end_time_min) && dome.route == -1) {
+    soft_end = 0;
     
     digitalWrite(motor_up, HIGH);
     digitalWrite(motor_down, LOW);
@@ -139,12 +146,24 @@ void finish_screws() {
     
     //detect which group of screws is hit and correct azimuth to it's azimuth:
     if(current_screws.one==screws1.one && current_screws.two==screws1.two && current_screws.three==screws1.three) {
+      if(DEBUG) {
+        Serial.println("Detected screws1");
+      }
       dome.azimuth = screws1.azimuth+diff/dome.cycles_for_degree;
     } else if(current_screws.one==screws2.one && current_screws.two==screws2.two && current_screws.three==screws2.three) {
+      if(DEBUG) {
+        Serial.println("Detected screws2");
+      }
       dome.azimuth = screws2.azimuth+diff/dome.cycles_for_degree;
     } else if(current_screws.one==screws3.one && current_screws.two==screws3.two && current_screws.three==screws3.three) {
+      if(DEBUG) {
+        Serial.println("Detected screws3");
+      }
       dome.azimuth = screws3.azimuth+diff/dome.cycles_for_degree;
     } else if(current_screws.one==screws4.one && current_screws.two==screws4.two && current_screws.three==screws4.three) {
+      if(DEBUG) {
+        Serial.println("Detected screws4");
+      }
       dome.azimuth = screws4.azimuth+diff/dome.cycles_for_degree;
     } else {
       if(DEBUG) {

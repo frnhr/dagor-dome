@@ -1,0 +1,68 @@
+serial protocol for arduino mega (dome control)
+
+line terminator: \n
+baud rate: 115200
+serial communications might fail during rotation of dome - avoid sending commands during this time
+
+-----------------------------------
+dome set azimuth
+ds###.#
+returns:
+dd		when dome is done with rotating
+ec		error - calibration is not done
+-----------------------------------
+dome park (go to home position)
+dp
+returns:
+dd		when dome is done with rotating
+ec		error - calibration is not done
+-----------------------------------
+dome get current azimuth
+dg
+returns:
+###.#	if everything is fine
+ec		error - calibration is not done
+-----------------------------------
+-----------------------------------
+door open
+do
+returns
+do		when door is opened
+-----------------------------------
+door close
+dc
+returns:
+dc		when door is closed
+-----------------------------------
+-----------------------------------
+set home at current location
+hs
+returns:
+-
+-----------------------------------
+get home position
+hg
+returns:
+###.#
+-----------------------------------
+-----------------------------------
+calibration start
+cs
+returns:
+cd		when calibration is done
+-----------------------------------
+-----------------------------------
+stop rotation of dome
+stop
+-----------------------------------
+-----------------------------------
+rotate dome up (right hand)
+up
+-----------------------------------
+-----------------------------------
+rotate dome down (right hand)
+up
+-----------------------------------
+-----------------------------------
+replaces current azimuth with new one (without moving)
+force###.#

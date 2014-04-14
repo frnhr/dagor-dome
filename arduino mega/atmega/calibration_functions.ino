@@ -18,7 +18,7 @@ void calibration_start() {
 
 void detect_screws(double diff) {
   if(DEBUG) {
-    Serial.print("detected:\t");
+    Serial.print("Detected:\t");
     Serial.print(current_screws.one);
     Serial.print("\t");
     Serial.print(current_screws.two);
@@ -28,22 +28,22 @@ void detect_screws(double diff) {
   }
   
   if(screws1.one==false && screws1.two==false && screws1.three==false) {
-    screws1.cycles = calibration.cycles;
+    screws1.cycles = calibration.cycles-diff;
     screws1.one = current_screws.one;
     screws1.two = current_screws.two;
     screws1.three = current_screws.three;
   } else if(screws2.one==false && screws2.two==false && screws2.three==false) {
-    screws2.cycles = calibration.cycles;
+    screws2.cycles = calibration.cycles-diff;
     screws2.one = current_screws.one;
     screws2.two = current_screws.two;
     screws2.three = current_screws.three;
   } else if(screws3.one==false && screws3.two==false && screws3.three==false) {
-    screws3.cycles = calibration.cycles;
+    screws3.cycles = calibration.cycles-diff;
     screws3.one = current_screws.one;
     screws3.two = current_screws.two;
     screws3.three = current_screws.three;
   } else if(screws4.one==false && screws4.two==false && screws4.three==false) {
-    screws4.cycles = calibration.cycles;
+    screws4.cycles = calibration.cycles-diff;
     screws4.one = current_screws.one;
     screws4.two = current_screws.two;
     screws4.three = current_screws.three;
