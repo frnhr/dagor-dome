@@ -79,9 +79,6 @@ int count_quadrature(int value) {
   }
   if (encoder.QE_code == 2) {
     value--;
-  }  
-  if (encoder.QE_code == 3) {
-    digitalWrite(led, HIGH);
   }
   
   return value;

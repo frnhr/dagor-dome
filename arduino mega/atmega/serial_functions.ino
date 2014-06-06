@@ -10,7 +10,13 @@ void serial_loop() {
   }
   
   if(serial_comm.reading_complete) {
-    if(serial_comm.data_received.charAt(0)=='d') { //dome or door
+    if(serial_comm.data_received=="status") {
+      Serial.print(dome.azimuth);
+      Serial.print("|");
+      Serial.print(dome.route);
+      Serial.print("|");
+      Serial.println(calibration.in_progress?0:(dome.cycles_for_degree==0?-1:1));
+    } else if(serial_comm.data_received.charAt(0)=='d') { //dome or door
       if(serial_comm.data_received.charAt(1)=='g') { //get azimuth
         if(dome.cycles_for_degree == 0) {
           Serial.println("ec");
@@ -43,7 +49,11 @@ void serial_loop() {
       if(serial_comm.data_received.charAt(1)=='g') { //get home
         Serial.println(dome.home_azimuth);
       } else if(serial_comm.data_received.charAt(1)=='s') { //set home at current position
-        EEPROM_write_home(dome.azimuth);
+        if(dome.cycles_for_degree == 0) {
+          Serial.println("ec");
+        } else {
+          EEPROM_write_home(dome.azimuth);
+        }
       }
     } else if(serial_comm.data_received == "cs") { //calibration start
       calibration_start();

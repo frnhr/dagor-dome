@@ -1,7 +1,6 @@
 //pins:
 int quadrature_L = 3; //encoder
 int quadrature_H = 2;
-int led = 8; //debugging led
 int motor_up = 11;
 int motor_down = 12;
 int controller_up = 6; //controller pins
@@ -67,7 +66,7 @@ typedef struct {
   long drift_start_time;
   double drift; //measured drift in degrees
 } Calibration;
-volatile Calibration calibration = {false, false, 0L};
+volatile Calibration calibration = {false, false, 0L, 0L, 0L, 0};
 
 //serial communications:
 typedef struct {
@@ -116,8 +115,6 @@ void setup() {
     Serial.print("Home azimuth: ");
     Serial.println(dome.home_azimuth);
   }
-  
-  pinMode(led, OUTPUT);
 }
 
 void loop() {  

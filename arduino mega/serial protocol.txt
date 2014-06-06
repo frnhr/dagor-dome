@@ -5,6 +5,12 @@ baud rate: 115200
 serial communications might fail during rotation of dome - avoid sending commands during this time
 
 -----------------------------------
+get status of dome
+status
+returns:
+current_position|direction_of_rotation|calibration
+-----------------------------------
+-----------------------------------
 dome set azimuth
 ds###.#
 returns:
@@ -61,7 +67,7 @@ up
 -----------------------------------
 -----------------------------------
 rotate dome down (right hand)
-up
+down
 -----------------------------------
 -----------------------------------
 replaces current azimuth with new one (without moving)
