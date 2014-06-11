@@ -2,13 +2,14 @@
 
 Usage:
     dome.py status
-    dome.py calibration
+    dome.py calibration [-r | --reset]
     dome.py azimuth set <azimuth> [-f | --force]
     dome.py azimuth get
     dome.py park
     dome.py door (open|close)
     dome.py home (set|get)
     dome.py manual (up|down|stop)
+	dome.py reset
     dome.py -h | --help
     dome.py --version
 
@@ -22,11 +23,13 @@ Commands:
     home set       Set home to current azimuth.
     home get       Get home azimuth.
     manual         Start or stop rotation of dome.
+	reset          Reset Arduino Mega.
 
 Options:
     -h --help      Show this screen or description of specific command.
     --version      Show version.
-    -f --force     Replace current azimuth with new one without moving dome."""
+    -f --force     Replace current azimuth with new one without moving dome.
+	-r --reset     Reset Arduino before executing command."""
   
 from docopt import docopt
 import serial
@@ -36,7 +39,7 @@ def _main(args):
 	ser.port = '/dev/ttyACM0'
 	ser.baudrate = 115200
 	ser.timeout = 1
-	ser.setDTR(False);
+	ser.setDTR(args['-r'] or args['--reset'] or args['reset']); #don't reset unless explicitly specified
 	ser.open()
 	
     if args['status']:
@@ -89,7 +92,7 @@ def _main(args):
 if __name__ == '__main__':
     args = docopt(__doc__, version=__doc__.split('\n'[0])
 
-    if len(sys.argv) == 1 or args['help']:
+    if len(sys.argv) == 1 or args['-h'] or args['--help']:
         print __doc__.strip()
         exit(0)
 
