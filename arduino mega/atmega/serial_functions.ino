@@ -41,9 +41,9 @@ void serial_loop() {
           motor_goto(dome.home_azimuth);
         }
       } else if(serial_comm.data_received.charAt(1)=='o') { //open door
-        
+        door_open();
       } else if(serial_comm.data_received.charAt(1)=='c') { //close door
-      
+        door_close();
       }
     } else if(serial_comm.data_received.charAt(0)=='h') { //home
       if(serial_comm.data_received.charAt(1)=='g') { //get home

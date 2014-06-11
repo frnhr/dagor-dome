@@ -7,8 +7,10 @@ int controller_up = 6; //controller pins
 int controller_down = 7;
 int controller_open = 4;
 int controller_close = 5;
-int switch_open = 23; //switch for door
-int switch_close = 25;
+int open_pin = 23; //control for door
+int close_pin = 25;
+int is_open_pin = 27; //unused
+int is_closed_pin = 29; //unused
 int switch_one = A0; //1st mehanical switch
 int switch_two = A1; //1st mehanical switch
 int switch_three = A2; //1st mehanical switch
@@ -104,10 +106,10 @@ void setup() {
   pinMode(controller_close, INPUT);
   
   //door open/close switch:
-  pinMode(switch_open, INPUT_PULLUP);
-  digitalWrite(switch_open, HIGH);
-  pinMode(switch_close, INPUT_PULLUP);
-  digitalWrite(switch_close, HIGH);
+  pinMode(open_pin, OUTPUT);
+  digitalWrite(open_pin, HIGH);
+  pinMode(close_pin, OUTPUT);
+  digitalWrite(close_pin, HIGH);
 
   dome.home_azimuth = EEPROM_read_home(); //read home from EEPROM
   
