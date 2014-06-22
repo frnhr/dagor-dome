@@ -21,34 +21,34 @@ void motor_loop() {
   }
   
  
-  if((current_screws.one || current_screws.two ||  current_screws.three) && abs(current_cycles-cycles_at_last_hit) > 128) { //if we hitted screws, correct azimuth
+  if((current_screws.one || current_screws.two ||  current_screws.three) && abs(current_cycles-cycles_at_last_hit) > 128) { //if we hit screws, correct azimuth
     finish_screws();
   }
   
-  //rotate in desired direction... controller has main word
-  if((millis()-soft_end > end_time_min) && (digitalRead(controller_down) || soft_start_down>0)) {
+  //rotate if controller button pressed
+  if((millis()-soft_end > end_time_min) && (controllerRead(controller_down) || soft_start_down>0)) {
     soft_end = 0;
     dome.route = 0;
     calibration.in_progress = false;
     calibration.cycles = 0;
     
-    if(digitalRead(controller_down) && soft_start_down==0) {
+    if(controllerRead(controller_down) && soft_start_down==0) {
       soft_start_down = millis();
-    } else if(!digitalRead(controller_down) && millis()-soft_start_down >= start_time_min) {
+    } else if(!controllerRead(controller_down) && millis()-soft_start_down >= start_time_min) {
       soft_start_down = 0;
     }
     
     digitalWrite(motor_up, LOW);
     digitalWrite(motor_down, HIGH);
-  } else if((millis()-soft_end > end_time_min) && (digitalRead(controller_up) || soft_start_up>0)) {
+  } else if((millis()-soft_end > end_time_min) && (controllerRead(controller_up) || soft_start_up>0)) {
     soft_end = 0;
     dome.route = 0;
     calibration.in_progress = false;
     calibration.cycles = 0;
     
-    if(digitalRead(controller_up) && soft_start_up==0) {
+    if(controllerRead(controller_up) && soft_start_up==0) {
       soft_start_up = millis();
-    } else if(!digitalRead(controller_up) && millis()-soft_start_up >= start_time_min) {
+    } else if(!controllerRead(controller_up) && millis()-soft_start_up >= start_time_min) {
       soft_start_up = 0;
     }
     
