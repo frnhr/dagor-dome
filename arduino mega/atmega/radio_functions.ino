@@ -10,14 +10,19 @@
  */
 void radio_loop()
 {
-  // door switch has priority in any case
-  if (doorSwitchRead(door_switch_close) || controllerRead(controller_close)) {
-    door_close();
-  }  else if (doorSwitchRead(door_switch_open) || controllerRead(controller_open)) {
-    door_open();
-  }  else {
-    door_clear();
-  }
+    // door switch has priority in any case
+    if (doorSwitchRead(door_switch_close) || controllerRead(controller_close))
+    {
+        door_close();
+    }
+    else if (doorSwitchRead(door_switch_open) || controllerRead(controller_open))
+    {
+        door_open();
+    }
+    else
+    {
+        door_clear();
+    }
 }
 
 /*
@@ -25,11 +30,11 @@ void radio_loop()
  */
 int doorSwitchRead(int pin)
 {
-  return digitalRead(pin) == 0;
+    return digitalRead(pin) == 0;
 }
 
 
- 
+
 unsigned long controller_last_failed_read_millis = 0;
 unsigned long controller_plug_in_deadzone = 5000;  // controller will become responsive after this ammount of time
 
@@ -37,16 +42,19 @@ unsigned long controller_plug_in_deadzone = 5000;  // controller will become res
  * This function reads controller buttons.
  * It also detects when controller is disconnected (i.e. all pins are HIGH due to pullups), if so returns 0.
  */
-int controllerRead(int pin) 
+int controllerRead(int pin)
 {
-  if ((digitalRead(controller_close) && digitalRead(controller_open))
-  || (digitalRead(controller_up) && digitalRead(controller_down))) {
-    controller_last_failed_read_millis = millis();
-    return 0;
-  } else if (millis() - controller_last_failed_read_millis < controller_plug_in_deadzone) {
-    return 0;
-  }
-  return digitalRead(pin);
+    if ((digitalRead(controller_close) && digitalRead(controller_open))
+            || (digitalRead(controller_up) && digitalRead(controller_down)))
+    {
+        controller_last_failed_read_millis = millis();
+        return 0;
+    }
+    else if (millis() - controller_last_failed_read_millis < controller_plug_in_deadzone)
+    {
+        return 0;
+    }
+    return digitalRead(pin);
 }
 
 /*
@@ -54,8 +62,8 @@ int controllerRead(int pin)
  */
 void door_open()
 {
-  digitalWrite(do_open_pin, LOW);
-  digitalWrite(do_close_pin, HIGH);
+    digitalWrite(do_open_pin, LOW);
+    digitalWrite(do_close_pin, HIGH);
 }
 
 /*
@@ -63,8 +71,8 @@ void door_open()
  */
 void door_close()
 {
-  digitalWrite(do_close_pin, LOW);
-  digitalWrite(do_open_pin, HIGH);
+    digitalWrite(do_close_pin, LOW);
+    digitalWrite(do_open_pin, HIGH);
 }
 
 /*
@@ -72,6 +80,6 @@ void door_close()
  */
 void door_clear()
 {
-  digitalWrite(do_open_pin, LOW);
-  digitalWrite(do_close_pin, LOW);
+    digitalWrite(do_open_pin, LOW);
+    digitalWrite(do_close_pin, LOW);
 }
