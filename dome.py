@@ -9,7 +9,7 @@ Usage:
     dome.py door (open|close)
     dome.py home (set|get)
     dome.py manual (up|down|stop)
-	dome.py reset
+    dome.py reset
     dome.py -h | --help
     dome.py --version
 
@@ -23,47 +23,47 @@ Commands:
     home set       Set home to current azimuth.
     home get       Get home azimuth.
     manual         Start or stop rotation of dome.
-	reset          Reset Arduino Mega.
+    reset          Reset Arduino.
 
 Options:
     -h --help      Show this screen or description of specific command.
-    --version      Show version.
-    -f --force     Replace current azimuth with new one without moving dome.
-	-r --reset     Reset Arduino before executing command."""
+    --version      Show version."""
   
 from docopt import docopt
 import serial
+import sys
+import dome_config
 
 def _main(args):
     ser = serial.Serial()
-	ser.port = '/dev/ttyACM0'
-	ser.baudrate = 115200
-	ser.timeout = 1
-	ser.setDTR(args['-r'] or args['--reset'] or args['reset']); #don't reset unless explicitly specified
-	ser.open()
-	
+    ser.port = dome_config.PORT
+    ser.baudrate = dome_config.BAUDRATE
+    ser.timeout = dome_config.TIMEOUT
+    ser.setDTR(args['-r'] or args['--reset'] or args['reset']); #don't reset unless explicitly specified
+    ser.open()
+    
     if args['status']:
-	    ser.write('status\n')
-		print ser.readline()
-	elif args['calibration']:
-	    ser.write('cs\n')
-	elif args['azimuth'] and args['set']:
+        ser.write('status\n')
+        print ser.readline().strip()
+    elif args['calibration']:
+        ser.write('cs\n')
+    elif args['azimuth'] and args['set']:
         if args['--force']:
             ser.write('force' + args['<azimuth>'] + '\n');
         else:
             ser.write('ds' + args['<azimuth>'] + '\n');
-            if ser.readline()=='ec':
+            if ser.readline().strip()=='ec':
                 raise Exception('Calibration is not done')
-	elif args['azimuth'] and args['get']:
-	    ser.write('dg\n')
-		reply = ser.readline()
+    elif args['azimuth'] and args['get']:
+        ser.write('dg\n')
+        reply = ser.readline().strip()
         if reply=='ec':
             raise Exception('Calibration is not done')
         else:
             print reply
     elif args['park']:
         ser.write('dp\n')
-        if ser.readline()=='ec':
+        if ser.readline().strip()=='ec':
             raise Exception('Calibration is not done')
     elif args['door']:
         if args['open']:
@@ -73,11 +73,11 @@ def _main(args):
     elif args['home']:
         if args['set']:
             ser.write('hs\n')
-            if ser.readline()=='ec':
+            if ser.readline().strip()=='ec':
                 raise Exception('Calibration is not done')
         else:
             ser.write('hg\n')
-            print ser.readline()
+            print ser.readline().strip()
     elif args['manual']:
         if args['up']:
             ser.write('up\n')
@@ -86,18 +86,14 @@ def _main(args):
         else:
             ser.write('stop\n')
     
-	ser.close()
-	exit(0)
+    ser.close()
+    sys.exit(0)
 
 if __name__ == '__main__':
-    args = docopt(__doc__, version=__doc__.split('\n'[0])
-
-    if len(sys.argv) == 1 or args['-h'] or args['--help']:
-        print __doc__.strip()
-        exit(0)
-
+    args = docopt(__doc__, version=__doc__.split('\n'[0]))
+    
     try:
         _main(args)
-    except:
-        raise
-        #exit_('ERROR')
+    except Exception as e:
+        print(e)
+        sys.exit(1)

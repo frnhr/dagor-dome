@@ -9,6 +9,10 @@ get status of dome
 status
 returns:
 current_position|direction_of_rotation|calibration
+
+current_position		-	current azimuth in degrees
+direction_of_rotation	-	0=still, 1=down, -1=up  (right hand)
+calibration				-	0=in progress, 1=done, -1=uncalibrated
 -----------------------------------
 -----------------------------------
 dome set azimuth
