@@ -25,9 +25,10 @@ void encoder_loop()
                 dome.azimuth += 360;
             }
 
-            if (dome.route != closer_route(dome.azimuth, dome.target_azimuth) && !calibration.measuring_drift && dome.route != 0) //did we passed target azimuth?
+            if (dome.target_azimuth<=360 && dome.route != closer_route(dome.azimuth, dome.target_azimuth) && !calibration.measuring_drift && dome.route != 0) //did we passed target azimuth?
             {
                 dome.route = 0;
+                dome.target_azimuth = 500;
                 Serial.println("dd");
             }
         }

@@ -59,11 +59,11 @@ typedef struct
 {
     double cycles_for_degree; //how many encoder cycles for one degree - determinated by calibration
     double azimuth; //current azimuth
-    double target_azimuth; //target azimuthswitch_one
+    double target_azimuth; //target azimuth
     double home_azimuth;
     int route; //direction    0 nothing    1 down    -1 up        (right hand)
 } DomeSettings;
-volatile DomeSettings dome = {0, 0, 0, 0, 0};
+volatile DomeSettings dome = {0, 0, 500, 0, 0};
 
 //calibration:
 typedef struct

@@ -22,7 +22,8 @@ void serial_loop()
             Serial.print("|");
             Serial.print(dome.route);
             Serial.print("|");
-            Serial.println(calibration.in_progress ? 0 : (dome.cycles_for_degree == 0 ? -1 : 1));
+            Serial.print(calibration.in_progress ? 0 : (dome.cycles_for_degree == 0 ? -1 : 1));
+            Serial.print("\n");
         }
         else if (serial_comm.data_received == "dg")   //get azimuth
         {
