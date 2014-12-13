@@ -1,9 +1,10 @@
 """Dagor dome rotation interface version 1.0.
 
 Usage:
-    dome.py status
+    dome.py status [-v | --verbose]
     dome.py calibration [-r | --reset]
-    dome.py azimuth set <azimuth> [-f | --force]
+    dome.py goto <azimuth>
+    dome.py azimuth set <azimuth>
     dome.py azimuth get
     dome.py park
     dome.py door (open|close)
@@ -16,7 +17,8 @@ Usage:
 Commands:
     status         Dome status (azimuth \\n rotating or not \\n calibrated, during calibration or uncalibrated)
     calibration    Start calibration.
-    azimuth set    Move dome to specified azimuth.
+    goto           Move dome to specified azimuth.
+    azimuth set    Set current position as specified azimuth.
     azimuth get    Get current azimuth.
     park           Move dome to home azimuth.
     door           Open or close door.
@@ -34,6 +36,20 @@ import serial
 import sys
 import dome_config
 
+def read_serial(ser):
+    status, lines = ser.readline().strip().split(' ')
+    reply = [ser.readline().strip() for _ in range(int(lines))]
+    
+    if status=='ok':
+        return reply
+    else:
+        raise Exception(reply)
+
+def write_serial(ser, str):
+    ser.write(str + '\n')
+    return read_serial(ser)
+    
+
 def _main(args):
     ser = serial.Serial()
     ser.port = dome_config.PORT
@@ -43,48 +59,41 @@ def _main(args):
     ser.open()
     
     if args['status']:
-        ser.write('status\n')
-        print ser.readline().strip()
+        reply = write_serial('status')
+        if args['-v'] or args['--verbose']:
+            position, rotation, calibration = reply
+            print 'Azimuth: {}'.format(position)
+            print 'Rotation: ' + {'0': 'Stop', '1': 'Down', '-1': 'Up'}[rotation]
+            print 'Calibration: ' + {'0': 'In progress', '1': 'Done', '-1': 'Not calibrated'}[calibration]
+        else:
+            print '|'.join(reply)
     elif args['calibration']:
-        ser.write('cs\n')
+        write_serial('cs\n')
+    elif args['goto']:
+        write_serial('ds' + args['<azimuth>']);
     elif args['azimuth'] and args['set']:
-        if args['--force']:
-            ser.write('force' + args['<azimuth>'] + '\n');
-        else:
-            ser.write('ds' + args['<azimuth>'] + '\n');
-            if ser.readline().strip()=='ec':
-                raise Exception('Calibration is not done')
+        write_serial('force' + args['<azimuth>']);
     elif args['azimuth'] and args['get']:
-        ser.write('dg\n')
-        reply = ser.readline().strip()
-        if reply=='ec':
-            raise Exception('Calibration is not done')
-        else:
-            print reply
+        print '\n'.join(write_serial('dg'))
     elif args['park']:
-        ser.write('dp\n')
-        if ser.readline().strip()=='ec':
-            raise Exception('Calibration is not done')
+        write_serial('dp')
     elif args['door']:
         if args['open']:
-            ser.write('do\n')
+            write_serial('do')
         else:
-            ser.write('dc\n')
+            write_serial('dc')
     elif args['home']:
         if args['set']:
-            ser.write('hs\n')
-            if ser.readline().strip()=='ec':
-                raise Exception('Calibration is not done')
+            write_serial('hs')
         else:
-            ser.write('hg\n')
-            print ser.readline().strip()
+            print '\n'.join(write_serial('hg'))
     elif args['manual']:
         if args['up']:
-            ser.write('up\n')
+            write_serial('up')
         elif args['down']:
-            ser.write('down\n')
+            write_serial('down')
         else:
-            ser.write('stop\n')
+            write_serial('stop')
     
     ser.close()
     sys.exit(0)
