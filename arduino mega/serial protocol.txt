@@ -7,8 +7,10 @@ serial communications might fail during rotation of dome - avoid sending command
 -----------------------------------
 get status of dome
 status
-returns:
-current_position|direction_of_rotation|calibration
+returns ok:
+<current_position>
+<direction_of_rotation>
+<calibration>
 
 current_position		-	current azimuth in degrees
 direction_of_rotation	-	0=still, 1=down, -1=up  (right hand)
@@ -17,62 +19,68 @@ calibration				-	0=in progress, 1=done, -1=uncalibrated
 -----------------------------------
 dome set azimuth
 ds###.#
-returns:
-dd		when dome is done with rotating
-ec		error - calibration is not done
+returns ok:
+"dd"		when dome is done with rotating
+returns error:
+"ec"		error - calibration is not done
 -----------------------------------
 dome park (go to home position)
 dp
-returns:
-dd		when dome is done with rotating
-ec		error - calibration is not done
+returns ok:
+"dd"		when dome is done with rotating
+returns error:
+"ec"		error - calibration is not done
 -----------------------------------
 dome get current azimuth
 dg
-returns:
+returns ok:
 ###.#	if everything is fine
-ec		error - calibration is not done
+returns error:
+"ec"		error - calibration is not done
 -----------------------------------
 -----------------------------------
 door open
 do
-returns
-do		when door is opened
+returns ok:
+"do"		when door is opened
 -----------------------------------
 door close
 dc
-returns:
-dc		when door is closed
+returns ok:
+"dc"		when door is closed
 -----------------------------------
 -----------------------------------
 set home at current location
 hs
-returns:
--
+returns ok
 -----------------------------------
 get home position
 hg
-returns:
+returns ok:
 ###.#
 -----------------------------------
 -----------------------------------
 calibration start
 cs
-returns:
-cd		when calibration is done
+returns ok:
+"cd"		when calibration is done
 -----------------------------------
 -----------------------------------
 stop rotation of dome
 stop
+returns ok
 -----------------------------------
 -----------------------------------
 rotate dome up (right hand)
 up
+returns ok
 -----------------------------------
 -----------------------------------
 rotate dome down (right hand)
 down
+returns ok
 -----------------------------------
 -----------------------------------
 replaces current azimuth with new one (without moving)
+returns ok:
 force###.#
