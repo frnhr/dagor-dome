@@ -61,7 +61,7 @@ def _main(args):
     ser.open()
     
     if args['status']:
-        reply = write_serial('status')
+        reply = write_serial(ser, 'status')
         if args['-v'] or args['--verbose']:
             position, rotation, calibration = reply
             print 'Azimuth: {}'.format(position)
@@ -70,31 +70,31 @@ def _main(args):
         else:
             print '|'.join(reply)
     elif args['calibration']:
-        write_serial('cs\n')
+        write_serial(ser, 'cs\n')
     elif args['goto']:
-        write_serial('ds' + args['<azimuth>']);
+        write_serial(ser, 'ds' + args['<azimuth>']);
     elif args['azimuth'] and args['set']:
-        write_serial('force' + args['<azimuth>']);
+        write_serial(ser, 'force' + args['<azimuth>']);
     elif args['azimuth'] and args['get']:
-        print '\n'.join(write_serial('dg'))
+        print '\n'.join(write_serial(ser, 'dg'))
     elif args['park']:
-        write_serial('dp')
+        write_serial(ser, 'dp')
     elif args['door']:
         if args['open']:
-            write_serial('do')
+            write_serial(ser, 'do')
         else:
-            write_serial('dc')
+            write_serial(ser, 'dc')
     elif args['home']:
         if args['set']:
-            write_serial('hs')
+            write_serial(ser, 'hs')
         else:
-            print '\n'.join(write_serial('hg'))
+            print '\n'.join(write_serial(ser, 'hg'))
     elif args['up']:
-        write_serial('up')
+        write_serial(ser, 'up')
     elif args['down']:
-        write_serial('down')
+        write_serial(ser, 'down')
     elif args['stop']:
-        write_serial('stop')
+        write_serial(ser, 'stop')
     
     ser.close()
     sys.exit(0)
