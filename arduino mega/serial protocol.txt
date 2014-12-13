@@ -1,7 +1,7 @@
 serial protocol for arduino mega (dome control)
 
 line terminator: \n
-baud rate: 115200
+baud rate: 9600
 serial communications might fail during rotation of dome - avoid sending commands during this time
 
 -----------------------------------

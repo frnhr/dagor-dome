@@ -13,9 +13,9 @@ int do_open_pin = 47; //control for door
 int do_close_pin = 49;
 int is_open_pin = 51; //unused
 int is_closed_pin = 53; //unused
-int switch_one = A0; //1st mehanical switch
-int switch_two = A1; //1st mehanical switch
-int switch_three = A2; //1st mehanical switch
+int switch_one = A4; //1st mehanical switch
+int switch_two = A5; //2nd mehanical switch
+int switch_three = A6; //3rd mehanical switch
 int led = 13;
 
 //constants:
@@ -87,7 +87,7 @@ SerialComm serial_comm = {"", false};
 
 void setup()
 {
-    Serial.begin(115200); //serial comm might not work correctly while dome is rotating (interrupts)
+    Serial.begin(9600); //serial comm might not work correctly while dome is rotating (interrupts)
 
     //quadrature inputs (encoder):
     pinMode(quadrature_L, INPUT_PULLUP);
