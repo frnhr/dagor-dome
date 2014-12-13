@@ -22,7 +22,7 @@ int led = 13;
 const int start_time_min = 1500, //minimal time dome will move when controller is pressed
           end_time_min = 2500,   //minimal time after rotation is done to allow new rotation
           minimal_movement = 5;  //minimal movement allowed
-const boolean DEBUG = true; //prints additional information over serial
+const boolean DEBUG = false; //prints additional information over serial
 
 //switches:
 typedef struct   //all combinations are when dome is rotating right
