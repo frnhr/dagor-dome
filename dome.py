@@ -9,7 +9,7 @@ Usage:
     dome.py park
     dome.py door (open|close)
     dome.py home (set|get)
-    dome.py manual (up|down|stop)
+    dome.py (up|down|stop)
     dome.py reset
     dome.py -h | --help
     dome.py --version
@@ -24,7 +24,9 @@ Commands:
     door           Open or close door.
     home set       Set home to current azimuth.
     home get       Get home azimuth.
-    manual         Start or stop rotation of dome.
+    up             Start rotation of the dome (south-east-north-west)
+    down           Start rotation of the dome (south-wast-north-east)
+    stop           Stop rotation of the dome.
     reset          Reset Arduino.
 
 Options:
@@ -87,13 +89,12 @@ def _main(args):
             write_serial('hs')
         else:
             print '\n'.join(write_serial('hg'))
-    elif args['manual']:
-        if args['up']:
-            write_serial('up')
-        elif args['down']:
-            write_serial('down')
-        else:
-            write_serial('stop')
+    elif args['up']:
+        write_serial('up')
+    elif args['down']:
+        write_serial('down')
+    elif args['stop']:
+        write_serial('stop')
     
     ser.close()
     sys.exit(0)
