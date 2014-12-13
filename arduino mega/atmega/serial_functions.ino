@@ -77,7 +77,7 @@ void serial_loop()
             Serial.println("ok 0");
             door_close();
         }
-        if (serial_comm.data_received == "hg")   //get home
+        else if (serial_comm.data_received == "hg")   //get home
         {
             Serial.println("ok 1");
             Serial.println(dome.home_azimuth);
