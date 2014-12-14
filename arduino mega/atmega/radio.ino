@@ -10,12 +10,11 @@
  */
 void radio_loop()
 {
-    // door switch has priority in any case
-    if (doorSwitchRead(door_switch_close) || controllerRead(controller_close))
+    if (status_buffer.doors == OPEN)
     {
         door_close();
     }
-    else if (doorSwitchRead(door_switch_open) || controllerRead(controller_open))
+    else if (status_buffer.doors == CLOSE)
     {
         door_open();
     }
@@ -23,14 +22,6 @@ void radio_loop()
     {
         door_clear();
     }
-}
-
-/*
- * Simple negative-logic.
- */
-int doorSwitchRead(int pin)
-{
-    return digitalRead(pin) == 0;
 }
 
 /*
@@ -47,8 +38,8 @@ void door_open()
  */
 void door_close()
 {
-    digitalWrite(do_close_pin, LOW);
     digitalWrite(do_open_pin, HIGH);
+    digitalWrite(do_close_pin, LOW);
 }
 
 /*

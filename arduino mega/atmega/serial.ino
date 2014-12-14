@@ -1,17 +1,4 @@
-//input buffer:
-const int NOOP = 0, DOWN = 1, UP = -1;
-const int OPEN = 1, CLOSE = -1;
-const int NULL_AZIMUTH = 500;
-typedef struct
-{
-    int direction; //0 nothing    1 down    -1 up        (right hand)
-    int doors; //0 nothing    1 open    -1 close
-    double target_azimuth; //target azimuth, default >360
-    bool start_calibration;
-    bool stop;
-} InputBuffer;
-InputBuffer INPUT_BUFFER_DEFAULTS = {NOOP, NOOP, NULL_AZIMUTH, false, false};
-volatile InputBuffer input_buffer = INPUT_BUFFER_DEFAULTS;
+
 
 void serial_loop()
 {
@@ -66,7 +53,7 @@ void serial_loop()
         else if (serial_comm.data_received == "dp" && calibration_check())   //park dome
         {
             Serial.println("ok 0");
-            input_buffer.target_azimuth = dome.home_azimuth;
+            input_buffer.target_azimuth = settings.home_azimuth;
         }
         else if (serial_comm.data_received == "do")   //open door
         {
@@ -81,7 +68,7 @@ void serial_loop()
         else if (serial_comm.data_received == "hs" && calibration_check())  //set home at current position
         {
             Serial.println("ok 0");
-            EEPROM_write_home(dome.azimuth);
+            EEPROM_write_home(status_buffer.current_azimuth);
         }
         else if (serial_comm.data_received == "cs")    //calibration start
         {
@@ -123,7 +110,7 @@ void serial_loop()
     }
 }
 
-bool calibration_check() {
+boolean calibration_check() {
     if (status_buffer.calibration != CALIBRATION_DONE)
     {
         Serial.println("error 1");

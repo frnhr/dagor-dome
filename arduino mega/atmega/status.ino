@@ -1,18 +1,9 @@
-//status buffer:
-const int STOP = 0;
-const int CALIBRATION_IN_PROGRESS = 0, CALIBRATION_DONE = 1, NOT_CALIBRATED = -1;
-typedef struct
-{
-    int rotation; //0 stop    1 down    -1 up        (right hand)
-    int doors; //0 nothing    1 open    -1 close
-    double target_azimuth; //target azimuth, default >360
-    double current_azimuth; //current azimuth
-    int calibration; //0=in progress, 1=done, -1=not calibrated
-} StatusBuffer;
-volatile StatusBuffer status_buffer = {STOP, NOOP, NULL_AZIMUTH, NULL_AZIMUTH, NOT_CALIBRATED};
+
 
 
 void status_loop() {
+    status_buffer.current_azimuth = encoders.current_azimuth;
+
     if(input_buffer.direction != NOOP) {
         cancel_calibration();
         status_buffer.target_azimuth = NULL_AZIMUTH;
@@ -24,7 +15,7 @@ void status_loop() {
         status_buffer.rotation = STOP;
     }
     
-    if(input_buffer.target_azimuth != NULL_AZIMUTH && status_buffer.calibation != CALIBRATION_IN_PROGRESS) {
+    if(input_buffer.target_azimuth != NULL_AZIMUTH && status_buffer.calibration != CALIBRATION_IN_PROGRESS) {
         
         status_buffer.target_azimuth = input_buffer.target_azimuth;
         status_buffer.rotation = closer_route(status_buffer.current_azimuth, status_buffer.target_azimuth);
@@ -46,24 +37,30 @@ void status_loop() {
         status_buffer.calibration = CALIBRATION_IN_PROGRESS;
     }
     
+    if(calibration.stage == DRIFT) {
+        status_buffer.rotation = STOP;
+    }
 }
 
 void cancel_calibration() {
     if(status_buffer.calibration == CALIBRATION_IN_PROGRESS) {
-        status_buffer.calibration == NOT_CALIBRATED;
+        status_buffer.calibration = NOT_CALIBRATED;
+        calibration = EMPTY_CALIBRATION;
     }
 }
 
 int closer_route(double azimuth, double target_azimuth)
 {    
     int distance = map_to_circle(target_azimuth - azimuth);
+    int delta;
     
     if (distance < 180)
     {
-        int delta = distance;
+        delta = distance;
+    }
     else
     {
-        int delta = abs(distance - 360);
+        delta = abs(distance - 360);
     }
     
     if(delta < settings.deadzone_movement) {

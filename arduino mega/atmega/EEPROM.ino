@@ -26,5 +26,5 @@ void EEPROM_write_home(double value)
         EEPROM.write(i, values[i]);
     }
 
-    dome.home_azimuth = value;
+    settings.home_azimuth = value;
 }
