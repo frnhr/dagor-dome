@@ -19,63 +19,31 @@ int switch_three = A6; //3rd mehanical switch
 int led = 13;
 
 //constants:
-const int start_time_min = 1500, //minimal time dome will move when controller is pressed
-          end_time_min = 2500,   //minimal time after rotation is done to allow new rotation
-          minimal_movement = 5;  //minimal movement allowed
 const boolean DEBUG = true; //prints additional information over serial
 
-//switches:
-typedef struct   //all combinations are when dome is rotating right
-{
-    boolean one;
-    boolean two;
-    boolean three;
-    double azimuth; //azimuth of dome when third screw is hit
-    long cycles; //cycles between previous screws and this one... used only for calibration
-} MehanicalCombination;
-volatile MehanicalCombination screws1 = {false, false, false, 0, 0};
-volatile MehanicalCombination screws2 = {false, false, false, 0, 0};
-volatile MehanicalCombination screws3 = {false, false, false, 0, 0};
-volatile MehanicalCombination screws4 = {false, false, false, 0, 0};
-
-volatile MehanicalCombination current_screws = {false, false, false, 0, 0}; //used to detect current combination
-
-//encoder:
+//timers:
 typedef struct
 {
-    long cycle;
-    long last_cycle;
+    unsigned long spinup_time,
+        spindown_time,
+        controller_last_failed_read_millis;
+} Timers;
+volatile Timers timers = {0, 0, 0};
 
-    int QE_old;
-    int QE_oldd;
-    int QE_new;
-    int QE_code;
-    int QE_matrix[16];
-} Encoder;
-volatile Encoder encoder = {0, 0, 0, 0, 0, 0, {0, 2, 1, 3, 0, 0, 3, 0, 0, 3, 0, 0, 3, 0, 0, 0}};
-
-//dome:
+//settings:
 typedef struct
 {
-    double cycles_for_degree; //how many encoder cycles for one degree - determinated by calibration
-    double azimuth; //current azimuth
-    double target_azimuth; //target azimuth
     double home_azimuth;
-    int route; //direction    0 nothing    1 down    -1 up        (right hand)
-} DomeSettings;
-volatile DomeSettings dome = {0, 0, 500, 0, 0};
-
-//calibration:
-typedef struct
-{
-    boolean in_progress;
-    boolean measuring_drift;
-    long cycles;
-    long drift_start_azimuth;
-    long drift_start_time;
-    double drift; //measured drift in degrees
-} Calibration;
-volatile Calibration calibration = {false, false, 0L, 0L, 0L, 0};
+    double cycles_for_degree;   //how many encoder cycles for one degree - determinated by calibration
+    int minimal_spinup_time,    //minimal time dome will move before any change
+        minimal_spindown_time,  //minimal time after rotation is done to allow new rotation
+        deadzone_movement,      //minimal movement allowed in degrees
+        controller_plug_in_deadzone,    // controller will become responsive after this ammount of time
+        minimal_spindown_drift_time,    //minimal time after rotation is done to measure drift
+        switch_read_cycles;    //switch reading length
+    double drift;               //measured drift in degrees
+} Settings;
+Settings settings = {0, 0, 1500, 2500, 5, 5000, 3000, 128, 0};
 
 //serial communications:
 typedef struct
@@ -84,6 +52,25 @@ typedef struct
     boolean reading_complete;
 } SerialComm;
 SerialComm serial_comm = {"", false};
+
+
+int map_to_circle(double azimuth) {
+    while(azimuth < 0)
+    {
+        azimuth += 360;
+    }
+    while(azimuth >= 360)
+    {
+        azimuth -= 360;
+    }
+    return azimuth;
+}
+
+void debug(String str) {
+    if(DEBUG)
+        Serial.println(str);
+}
+
 
 void setup()
 {
@@ -133,7 +120,7 @@ void setup()
     pinMode(do_close_pin, OUTPUT);
     digitalWrite(do_close_pin, HIGH);
 
-    dome.home_azimuth = EEPROM_read_home(); //read home from EEPROM
+    settings.home_azimuth = EEPROM_read_home(); //read home from EEPROM
 
     if (DEBUG)
     {
@@ -144,12 +131,13 @@ void setup()
 
 void loop()
 {
-    encoder_loop();
-
     serial_loop();
-
-    radio_loop();
-
-    motor_loop();
-
+    
+    controller_loop();
+    
+    status_loop();
+    
+    encoder_loop();
+    
+    calibration_loop();
 }

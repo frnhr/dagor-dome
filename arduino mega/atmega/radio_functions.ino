@@ -33,30 +33,6 @@ int doorSwitchRead(int pin)
     return digitalRead(pin) == 0;
 }
 
-
-
-unsigned long controller_last_failed_read_millis = 0;
-unsigned long controller_plug_in_deadzone = 5000;  // controller will become responsive after this ammount of time
-
-/*
- * This function reads controller buttons.
- * It also detects when controller is disconnected (i.e. all pins are HIGH due to pullups), if so returns 0.
- */
-int controllerRead(int pin)
-{
-    if ((digitalRead(controller_close) && digitalRead(controller_open))
-            || (digitalRead(controller_up) && digitalRead(controller_down)))
-    {
-        controller_last_failed_read_millis = millis();
-        return 0;
-    }
-    else if (millis() - controller_last_failed_read_millis < controller_plug_in_deadzone)
-    {
-        return 0;
-    }
-    return digitalRead(pin);
-}
-
 /*
  * Open Sesame!
  */

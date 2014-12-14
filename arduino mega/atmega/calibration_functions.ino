@@ -1,22 +1,38 @@
-void calibration_start()
+
+//calibration:
+typedef struct
 {
-    //reset variables in case that calibration is running after another calibration
-    //be sure to run from home position in that case
-    calibration.in_progress = true;
-    calibration.cycles = 0L;
-    volatile MehanicalCombination screws1 = {false, false, false, 0, 0};
-    volatile MehanicalCombination screws2 = {false, false, false, 0, 0};
-    volatile MehanicalCombination screws3 = {false, false, false, 0, 0};
-    volatile MehanicalCombination screws4 = {false, false, false, 0, 0};
-    volatile MehanicalCombination current_screws = {false, false, false, 0, 0};
+    bool measuring_drift;
+    long drift_start_azimuth;
+    long drift_start_time;
+    MehanicalCombination last_combination;
+    MehanicalCombination first_combination;
+} Calibration;
+volatile Calibration calibration = {false, 0, 0, 0, EMPTY_COMBINATION, EMPTY_COMBINATION};
 
-    dome.route = 1; //rotate down
 
-    if (DEBUG)
-    {
-        Serial.println("Start of calibration");//DEBUG
+
+void calibration_loop() 
+{
+    if (status_buffer.calibration != CALIBRATION_IN_PROGRESS) {
+        return;
+    }
+    
+    if (encoders.last_combination != calibration.last_combination) {
+        
+        FixedPosition current_position = get_position(encoders.last_combination);
+        current_position
+        
+        encoders.last_combination = calibration.last_combination;
     }
 }
+
+
+
+
+
+
+
 
 void detect_screws(double diff)
 {
