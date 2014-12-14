@@ -39,7 +39,11 @@ import sys
 import dome_config
 
 def read_serial(ser):
-    status, lines = ser.readline().strip().split(' ')
+    raw_reply = ser.readline().strip()
+    try:
+        status, lines = raw_reply.split(' ')
+    except ValueError:
+        status, lines = (raw_reply, 0)
     reply = [ser.readline().strip() for _ in range(int(lines))]
     
     if status=='ok':

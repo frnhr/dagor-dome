@@ -1,27 +1,34 @@
 unsigned long controller_last_failed_read_millis = 0;
+boolean controller_direction = false;
+boolean controller_doors = false;
 
 void controller_loop() {
-    boolean door_up = controllerRead(controller_up);
-    boolean door_down = controllerRead(controller_down);
+    boolean dome_up = controllerRead(controller_up);
+    boolean dome_down = controllerRead(controller_down);
     boolean door_open = controllerRead(controller_open) || doorSwitchRead(door_switch_open);
     boolean door_close = controllerRead(controller_close) || doorSwitchRead(door_switch_close);
     if(door_open && door_close)
         door_open = false;
-    
-    if(door_up || door_down) {
+
+    if(dome_up || dome_down) {
         InputBuffer clean_input_buffer = INPUT_BUFFER_DEFAULTS;
         clean_input_buffer.doors = input_buffer.doors;
         input_buffer = clean_input_buffer;
-        clean_input_buffer.direction = door_up ? UP : DOWN;
+        
+        clean_input_buffer.direction = dome_up ? UP : DOWN;
         input_buffer = clean_input_buffer;
-    } else if(input_buffer.direction != NOOP || status_buffer.rotation != NOOP) {
-        input_buffer.direction = NOOP;
+        controller_direction = true;
+    } else if(controller_direction) {        
+        input_buffer.stop = true;
+        controller_direction = false;
     }
     
-    if(door_open || door_close) {
+    if(door_open || door_close) {        
         input_buffer.doors = door_open ? OPEN : CLOSE;
-    } else if(input_buffer.doors != NOOP || status_buffer.doors != NOOP) {
-        input_buffer.doors = NOOP;
+        controller_doors = true;
+    } else if(controller_doors) {
+        input_buffer.doors = DOORS_STOP;
+        controller_doors = false;
     }
 }
 

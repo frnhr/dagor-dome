@@ -5,7 +5,10 @@
 const boolean DEBUG = true; //prints additional information over serial
 void debug(String str) {
     if(DEBUG)
-        Serial.println(str);
+        Serial.print(str);
+}
+void debugln(String str) {
+    debug(str + "\n");
 }
 
 void setup()
@@ -67,6 +70,8 @@ void setup()
 
 void loop()
 {
+    input_buffer = INPUT_BUFFER_DEFAULTS;
+    
     serial_loop();
     
     controller_loop();
@@ -78,4 +83,6 @@ void loop()
     status_loop();
     
     motor_loop();
+    
+    radio_loop();  
 }

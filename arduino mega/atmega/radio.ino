@@ -29,8 +29,8 @@ void radio_loop()
  */
 void door_open()
 {
-    digitalWrite(do_open_pin, LOW);
-    digitalWrite(do_close_pin, HIGH);
+    digitalWrite(do_open_pin, HIGH);
+    digitalWrite(do_close_pin, LOW);
 }
 
 /*
@@ -38,8 +38,8 @@ void door_open()
  */
 void door_close()
 {
-    digitalWrite(do_open_pin, HIGH);
-    digitalWrite(do_close_pin, LOW);
+    digitalWrite(do_open_pin, LOW);
+    digitalWrite(do_close_pin, HIGH);
 }
 
 /*

@@ -31,10 +31,17 @@ void status_loop() {
         }
     }
     
-    status_buffer.doors = input_buffer.doors;
+    if (input_buffer.doors != NOOP){
+        if (input_buffer.doors == DOORS_STOP){
+            status_buffer.doors = STOP;
+        } else {
+            status_buffer.doors = input_buffer.doors;
+        }
+    }
     
     if(input_buffer.start_calibration) {
         status_buffer.calibration = CALIBRATION_IN_PROGRESS;
+        status_buffer.rotation = DOWN;
     }
     
     if(calibration.stage == DRIFT) {

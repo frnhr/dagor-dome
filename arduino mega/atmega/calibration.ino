@@ -29,7 +29,7 @@ void calibration_loop()
         if(calibration.stage == HOME_OFFSET) {
             calibration.first_combination = calibration.current_combination;
             calibration.stage = POSITIONS;
-        } else if(calibration.current_combination == calibration.first_combination) {
+        } else if(calibration.stage == POSITIONS && calibration.current_combination == calibration.first_combination) {
             FixedPosition * first_position = get_position(calibration.first_combination);
             settings.cycles_for_degree = abs((q_encoder.cycle + diff - first_position->cycles) / 360);
             

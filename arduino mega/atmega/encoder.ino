@@ -1,17 +1,20 @@
 FixedPosition * get_position(MehanicalCombination comb) {
     if (comb == position1.comb) {
+        debugln("position1");
         return &position1;
     }
     if (comb == position2.comb) {
+        debugln("position2");
         return &position2;
     }
     if (comb == position3.comb) {
+        debugln("position3");
         return &position3;
     }
     if (comb == position4.comb) {
+        debugln("position4");
         return &position4;
     }
-    return &EMPTY_POSITION;
 }
 
 
@@ -29,35 +32,35 @@ void encoder_loop()
     
     // FIXED_POSITIONS:
     // update encoders.last_combination and correct encoders.current_azimuth
-    bool one = analogRead(switch_one) == 0;  // TODO treshold
-    bool two = analogRead(switch_one) == 0;
-    bool three = analogRead(switch_one) == 0;
+    bool one = analogRead(switch_one) < 50;  // TODO treshold
+    bool two = analogRead(switch_two) < 50;
+    bool three = analogRead(switch_three) < 50;
     if (one || two || three) {
-        if (current_combination_remaining_cycles == -1) {
-            current_combination_remaining_cycles = settings.switch_read_cycles;
-            current_combination_start_cycles = q_encoder.cycle;
-            current_combination = EMPTY_COMBINATION;
-        }
-        if (current_combination_remaining_cycles > 0) {
+      debug(one ? " X " : "   ");
+      debug(two ? " X " : "   ");
+      debugln(three ? " X " : "   ");
+        if (abs(q_encoder.cycle - current_combination_start_cycles) < settings.switch_read_cycles) {
             current_combination.one |= one;
             current_combination.two |= two;
-            current_combination.three |= three;
-            current_combination_remaining_cycles--;
-        }
-    }
-    // current_combination_remaining_cycles == 0 means that screws are ready to be read
-    if (current_combination_remaining_cycles == 0) {
-        encoders.last_combination = current_combination;
-        current_combination_remaining_cycles = -1;
-        
-        if (status_buffer.calibration == CALIBRATION_DONE) {
-            long diff = settings.switch_read_cycles;
-            if (q_encoder.cycle - current_combination_start_cycles < 0) {
-                // TODO check directions
-                diff *= -1;
+            current_combination.three |= three;          
+        } else {
+            if (encoders.read_combination) {
+                encoders.last_combination = current_combination;
+                if (status_buffer.calibration == CALIBRATION_DONE) {
+                    long diff = settings.switch_read_cycles;
+                    if (abs(q_encoder.cycle - current_combination_start_cycles) < 0) {
+                        // TODO check directions
+                        diff *= -1;
+                    }
+                    FixedPosition * current_position = get_position(current_combination);
+                    encoders.current_azimuth = current_position->azimuth + diff / settings.cycles_for_degree;
+                }
+                encoders.read_combination = false;
+            } else {
+                current_combination_start_cycles = q_encoder.cycle;
+                current_combination = EMPTY_COMBINATION;
+                encoders.read_combination = true;
             }
-            FixedPosition * current_position = get_position(current_combination);
-            encoders.current_azimuth = current_position->azimuth + diff / settings.cycles_for_degree;
         }
     }
 }

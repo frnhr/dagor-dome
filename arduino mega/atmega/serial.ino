@@ -1,9 +1,7 @@
 
 
 void serial_loop()
-{
-    input_buffer = INPUT_BUFFER_DEFAULTS;
-    
+{   
     while (Serial.available() > 0)
     {
         char incomingByte = (char)Serial.read();
@@ -60,10 +58,15 @@ void serial_loop()
             Serial.println("ok 0");
             input_buffer.doors = OPEN;
         }
-        else if (serial_comm.data_received == "dc")   //close door
+          else if (serial_comm.data_received == "dc")   //close door
         {
             Serial.println("ok 0");
             input_buffer.doors = CLOSE;
+        }
+        else if (serial_comm.data_received == "dt")   //stop door
+        {
+            Serial.println("ok 0");
+            input_buffer.doors = DOORS_STOP;
         }
         else if (serial_comm.data_received == "hs" && calibration_check())  //set home at current position
         {

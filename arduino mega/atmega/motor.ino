@@ -1,5 +1,3 @@
-
-
 void motor_loop()
 {
     if(motors.rotation == STOP) {
@@ -27,7 +25,7 @@ void motor_loop()
     if(motors.rotation == DOWN) {
         digitalWrite(motor_up, LOW);
         digitalWrite(motor_down, HIGH);
-    } else  if(motors.rotation == UP) {
+    } else if(motors.rotation == UP) {
         digitalWrite(motor_up, HIGH);
         digitalWrite(motor_down, LOW);
     } else  {

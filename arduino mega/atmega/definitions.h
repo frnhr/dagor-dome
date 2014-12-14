@@ -19,7 +19,7 @@ Settings settings = {0, 0, 1500, 2500, 5000, 5000, 128, 5, 0};
 
 //input buffer:
 const int NOOP = 0, DOWN = 1, UP = -1;
-const int OPEN = 1, CLOSE = -1;
+const int OPEN = 1, CLOSE = -1, DOORS_STOP = 3;
 const int NULL_AZIMUTH = 500;
 typedef struct
 {
@@ -89,8 +89,9 @@ typedef struct
     double current_azimuth;
     
     MehanicalCombination last_combination;
+    bool read_combination;
 } Encoders;
-Encoders encoders = {NULL_AZIMUTH, EMPTY_COMBINATION};
+Encoders encoders = {NULL_AZIMUTH, EMPTY_COMBINATION, false};
 
 long current_combination_remaining_cycles;
 long current_combination_start_cycles;
@@ -105,7 +106,7 @@ typedef struct
     int QE_code;
     int QE_matrix[16];
 } QEncoder;
-QEncoder q_encoder = {0, 0, 0, 0, 0, 0, {0, 2, 1, 3, 0, 0, 3, 0, 0, 3, 0, 0, 3, 0, 0, 0}};
+volatile QEncoder q_encoder = {0, 0, 0, 0, 0, 0, {0, 2, 1, 3, 0, 0, 3, 0, 0, 3, 0, 0, 3, 0, 0, 0}};
 
 
 
