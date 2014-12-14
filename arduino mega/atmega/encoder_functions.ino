@@ -50,7 +50,7 @@ long current_combination_remaining_cycles;
 long current_combination_start_cycles;
 
 
-*FixedPosition get_position(MehanicalCombination comb) {
+FixedPosition * get_position(MehanicalCombination comb) {
     if (comb == position1.comb) {
         return &position1;
     }
@@ -107,8 +107,8 @@ void encoder_loop()
                 // TODO check directions
                 diff *= -1;
             }
-            FixedPosition *current_position = get_position(current_combination);
-            encoders.current_azimuth = current_position.azimuth + diff / settings.cycles_for_degree;
+            FixedPosition * current_position = get_position(current_combination);
+            encoders->current_azimuth = current_position.azimuth + diff / settings.cycles_for_degree;
         }
     }
     

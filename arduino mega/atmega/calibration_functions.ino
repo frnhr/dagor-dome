@@ -20,8 +20,13 @@ void calibration_loop()
     
     if (encoders.last_combination != calibration.last_combination) {
         
-        FixedPosition current_position = get_position(encoders.last_combination);
-        current_position
+        FixedPosition * current_position = get_position(encoders.last_combination);
+        current_position->cycles = q_encoder.cycle;
+        // TODO diff 128
+        
+        
+        // TODO update position-> azimuth when calibration complete
+        
         
         encoders.last_combination = calibration.last_combination;
     }
