@@ -1,61 +1,70 @@
-unsigned long controller_last_failed_read_millis = 0;
-boolean controller_direction = false;
-boolean controller_doors = false;
 
-void controller_loop() {
-    boolean dome_up = controllerRead(controller_up);
-    boolean dome_down = controllerRead(controller_down);
-    boolean door_open = controllerRead(controller_open) || doorSwitchRead(door_switch_open);
-    boolean door_close = controllerRead(controller_close) || doorSwitchRead(door_switch_close);
-    if(door_open && door_close)
+void controllers_loop()
+{
+    bool dome_up = controllerRead(controller_up);
+    bool dome_down = controllerRead(controller_down);
+    bool door_open = controllerRead(controller_open) || doorSwitchRead(door_switch_open);
+    bool door_close = controllerRead(controller_close) || doorSwitchRead(door_switch_close);
+
+    /* if controller says open and switch says close (or vice versa) then close */
+    if (door_open && door_close) {
         door_open = false;
+    }
 
-    if(dome_up || dome_down) {
+    /* rotate the donme */
+    if (dome_up || dome_down) {
         InputBuffer clean_input_buffer = INPUT_BUFFER_DEFAULTS;
         clean_input_buffer.doors = input_buffer.doors;
         input_buffer = clean_input_buffer;
         
         clean_input_buffer.direction = dome_up ? UP : DOWN;
         input_buffer = clean_input_buffer;
-        controller_direction = true;
-    } else if(controller_direction) {        
+        _controllers.rotation_pressed = true;
+    } else if (_controllers.rotation_pressed) {        
         input_buffer.stop = true;
-        controller_direction = false;
+        _controllers.rotation_pressed = false;
     }
     
-    if(door_open || door_close) {        
+    /* open / close the door */
+    if (door_open || door_close) {        
         input_buffer.doors = door_open ? OPEN : CLOSE;
-        controller_doors = true;
-    } else if(controller_doors) {
+        _controllers.door_pressed = true;
+    } else if (_controllers.door_pressed) {
         input_buffer.doors = DOORS_STOP;
-        controller_doors = false;
+        _controllers.door_pressed = false;
     }
 }
 
 
 /*
- * Simple negative-logic.
+ * Simple negative logic.
  */
-int doorSwitchRead(int pin)
+bool doorSwitchRead(int pin)
 {
-    return digitalRead(pin) == 0;
+    return digitalRead(pin) == LOW;
 }
+
 
 /*
  * This function reads controller buttons.
  * It also detects when controller is disconnected (i.e. all pins are HIGH due to pullups), if so returns 0.
  */
-boolean controllerRead(int pin)
+bool controllerRead(int pin)
 {
-    if ((digitalRead(controller_close) && digitalRead(controller_open))
-            || (digitalRead(controller_up) && digitalRead(controller_down)))
-    {
-        controller_last_failed_read_millis = millis();
+    /* controller pins have internal pullups, so if they are all HIGH, it means controller is unplugged */
+    bool disconnected = (digitalRead(controller_close) && digitalRead(controller_open))
+                      || (digitalRead(controller_up) && digitalRead(controller_down));
+    if (disconnected) {
+        _controllers.last_failed_read_millis = millis();
+        return LOW;
+    } 
+
+    /* wait for at least settings_buffer.controller_plug_in_timeout millis before allowing a read from the controller */
+    /* this prevents random triggering when (un)plugging the controller */
+    if (millis() - _controllers.last_failed_read_millis < settings_buffer.controller_plug_in_timeout) {
         return LOW;
     }
-    else if (millis() - controller_last_failed_read_millis < settings.controller_plug_in_deadzone)
-    {
-        return LOW;
-    }
+
+    /* read the pin... */
     return digitalRead(pin);
 }

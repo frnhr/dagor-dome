@@ -38,6 +38,7 @@ import serial
 import sys
 import dome_config
 
+
 def read_serial(ser):
     raw_reply = ser.readline().strip()
     try:
@@ -50,6 +51,7 @@ def read_serial(ser):
         return reply
     else:
         raise Exception(reply)
+
 
 def write_serial(ser, str):
     ser.write(str + '\n')
@@ -102,6 +104,7 @@ def _main(args):
     
     ser.close()
     sys.exit(0)
+
 
 if __name__ == '__main__':
     args = docopt(__doc__, version=__doc__.split('\n'[0]))

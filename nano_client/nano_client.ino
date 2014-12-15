@@ -2,11 +2,11 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 
-boolean DEBUG = true;
+bool DEBUG = true;
 
-//
+// 
 // Hardware configuration
-//
+// 
 int close_pin = A0;
 int open_pin = A1;
 int is_closed_pin = A2;  // unused
@@ -23,7 +23,7 @@ unsigned long door_action = 3;
 int reset_pin = 7;
 
 int led = 8;  // onboard led 13 is used by RF24 for clock o_O
-boolean led_state = HIGH;
+bool led_state = HIGH;
 unsigned long led_time_ok = 1000;
 unsigned long led_time_blackout = 50;
 unsigned long led_timer = led_time_blackout;
@@ -37,21 +37,21 @@ unsigned long radio_wd_time = 4000;
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
 RF24 radio(9, 10);
 
-//
+// 
 // Topology
-//
+// 
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xE8E8F0F0E1LL };
 
-//
+// 
 // Role management
-//
+// 
 typedef enum { role_ping_out = 1, role_pong_back } role_e;
 role_e role = role_ping_out;
 
 
 void setup()
 {
-    //reset hack
+    // reset hack
     digitalWrite(reset_pin, HIGH);
     pinMode(reset_pin, OUTPUT);
 
@@ -67,9 +67,9 @@ void setup()
     pinMode(is_open_pin, INPUT_PULLUP);
     digitalWrite(is_open_pin, HIGH);
 
-    //
+    // 
     // Setup and configure rf radio
-    //
+    // 
     radio.begin();
 
     // optionally, increase the delay between retries & # of retries
@@ -101,7 +101,7 @@ void setup()
  * Positive logic.
  * Also guard against disconnected C1 Arduino (all command pins will be HIGH due to internal pullup).
  */
-boolean readCommandPin(int pin)
+bool readCommandPin(int pin)
 {
     if (digitalRead(open_pin) && digitalRead(close_pin))
     {
@@ -146,7 +146,7 @@ void radio_loop()
         Serial.println(door_action);
     }
 
-    boolean ok = radio.write(&door_action, sizeof(unsigned long));
+    bool ok = radio.write(&door_action, sizeof(unsigned long));
     if (DEBUG)
     {
         if (ok)
@@ -166,7 +166,7 @@ void radio_loop()
 
     // Wait here until we get a response, or timeout (250ms)
     unsigned long started_waiting_at = millis();
-    boolean timeout = false;
+    bool timeout = false;
     while (!radio.available() && !timeout)
     {
         if (millis() - started_waiting_at > 250)

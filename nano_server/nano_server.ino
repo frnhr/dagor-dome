@@ -2,11 +2,11 @@
 #include "nRF24L01.h"
 #include "RF24.h"
 
-boolean DEBUG = true;
+bool DEBUG = true;
 
-//
+// 
 // Hardware configuration
-//
+// 
 int rele_open = 5;
 int rele_close = 6;
 int reset_pin = 7;
@@ -31,7 +31,7 @@ unsigned long last_radio_recieve_millis = 0;
 unsigned long radio_wd_time = 4000;
 
 int led = 8;  // onboard led 13 is used by RF24 for clock o_O
-boolean led_state = HIGH;
+bool led_state = HIGH;
 unsigned long led_time_ok = 1000;
 unsigned long led_time_blackout = 50;
 unsigned long led_timer = led_time_blackout;
@@ -41,9 +41,9 @@ unsigned long radio_led_blackout_treshold = 1000;
 // Set up nRF24L01 radio on SPI bus plus pins 9 & 10
 RF24 radio(9, 10);
 
-//
+// 
 // Topology
-//
+// 
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0xF0F0F0F0E1LL, 0xE8E8F0F0E1LL };
 
@@ -131,7 +131,7 @@ void door_loop()
     }
 
 
-    //@TODO look at is_open and is_closed and oply fire relays if needed
+    // @TODO look at is_open and is_closed and oply fire relays if needed
     if (current_door_state == 1)
     {
         digitalWrite(rele_open, LOW);
@@ -162,7 +162,7 @@ void radio_loop()
     {
         // Dump the payloads until we've gotten everything
         unsigned long door_action;
-        boolean done = false;
+        bool done = false;
 
         while (!done)
         {
