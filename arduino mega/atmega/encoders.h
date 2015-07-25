@@ -103,13 +103,19 @@ Encoders encoders = {NULL_AZIMUTH, EMPTY_COMBINATION};
 
 
 /***** INTERNALS *****/
+// TODO make these as enum?
+const int READING = 1, FINISHED = 2;
 
 typedef struct {
     MehanicalCombination current_combination;
     long current_combination_start_cycles;
-    bool read_combination;
+    char read_stage;  // 0 - idle, 1 - being triggered, 2 - finished, ready to read value
+    int number_of_reads_1;
+    int number_of_reads_2;
+    int number_of_reads_3;
+
 } EncodersInternal;
-EncodersInternal _encoders = {EMPTY_COMBINATION, 0, false};
+EncodersInternal _encoders = {EMPTY_COMBINATION, 0, NOOP, 0, 0, 0};
 
 typedef struct {
     long cycle;

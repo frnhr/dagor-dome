@@ -18,23 +18,23 @@ void calibration_loop()
         /* a fixed position was just hit */
         calibration.current_combination = encoders.last_combination;
         
-        // get next empty FixedPosition object
-        FixedPosition *current_position = get_position(EMPTY_COMBINATION);
-        // ... populate its combination
-        current_position->combination = calibration.current_combination;
-        long diff = settings_buffer.switch_read_cycles;
-        //TODO here we break interfaces:
-        if (_q_encoder.cycle - _encoders.current_combination_start_cycles < 0) {
-            diff *= -1;
+        if (calibration.current_combination != calibration.first_combination) {
+            // get next empty FixedPosition object
+            FixedPosition *current_position = get_position(EMPTY_COMBINATION);
+            // ... populate its combination
+            current_position->combination = calibration.current_combination;
+            //TODO here we break interfaces:
+            current_position->cycles = _q_encoder.cycle;
         }
-        current_position->cycles = _q_encoder.cycle + diff;
         
         if (calibration.stage == HOME_OFFSET) {
             calibration.first_combination = calibration.current_combination;
             calibration.stage = POSITIONS;
-        } else if (calibration.stage == POSITIONS && calibration.current_combination == calibration.first_combination) {
+        } else if (calibration.stage == POSITIONS && 
+                   calibration.current_combination == calibration.first_combination) {
             FixedPosition * first_position = get_position(calibration.first_combination);
-            settings_buffer.cycles_for_degree = abs((_q_encoder.cycle + diff - first_position->cycles) / 360);
+            FixedPosition * last_position = get_position(encoders.last_combination);
+            settings_buffer.cycles_for_degree = abs((last_position->cycles - first_position->cycles) / 360);
             
             _q_encoder.cycle = 0;
             calibration.stage = DRIFT;

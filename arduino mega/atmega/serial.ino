@@ -52,7 +52,7 @@ void serial_loop()
         } else if (_serial.data_received == "hs" && _serial_calibration_check()) {  // set home at current position
             Serial.println("ok 0");
             EEPROM_write_home(status_buffer.current_azimuth);
-        } else if (_serial.data_received == "cs")  {   // calibration start
+        } else if (_serial.data_received == "calibrate")  {   // calibration start
             Serial.println("ok 0");
             input_buffer.start_calibration = true;
         } else if (_serial.data_received == "stop") {   // stop rotation manually

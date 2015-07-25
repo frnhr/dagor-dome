@@ -26,8 +26,9 @@ typedef struct {
     unsigned long switch_read_cycles;    // switch reading length
     int deadzone_movement;      // minimal movement allowed in degrees
     double drift;               // measured drift in degrees
+    int weak_switch_threshold;
 } Settings;
-Settings settings_buffer = {HOME_AZIMUTH, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 128, 5, 0};
+Settings settings_buffer = {HOME_AZIMUTH, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 128, 5, 0, 4};
 
 
 

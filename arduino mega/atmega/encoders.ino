@@ -24,29 +24,59 @@ void encoder_loop()
         debug(one ? " X " : "   ");
         debug(two ? " X " : "   ");
         debugln(three ? " X " : "   ");
-        if (abs(_q_encoder.cycle - _encoders.current_combination_start_cycles) < settings_buffer.switch_read_cycles) {
-            _encoders.current_combination.one |= one;
-            _encoders.current_combination.two |= two;
-            _encoders.current_combination.three |= three;          
-        } else {
-            if (_encoders.read_combination) {
-                encoders.last_combination = _encoders.current_combination;
-                if (status_buffer.calibration == CALIBRATION_DONE) {
-                    long diff = settings_buffer.switch_read_cycles;
-                    if (abs(_q_encoder.cycle - _encoders.current_combination_start_cycles) < 0) {
-                        // TODO check directions
-                        diff *= -1;
-                    }
-                    FixedPosition * current_position = get_position(_encoders.current_combination);
-                    encoders.current_azimuth = current_position->azimuth + diff / settings_buffer.cycles_for_degree;
-                }
-                _encoders.read_combination = false;
-            } else {
-                _encoders.current_combination_start_cycles = _q_encoder.cycle;
-                _encoders.current_combination = EMPTY_COMBINATION;
-                _encoders.read_combination = true;
-            }
+    };
+
+    if (_encoders.read_stage == NOOP) {
+        if (one || two || three) {
+            _encoders.read_stage = READING;
+            _encoders.current_combination_start_cycles = _q_encoder.cycle;
+            _encoders.current_combination = EMPTY_COMBINATION;
+            _encoders.number_of_reads_1 = 0;
+            _encoders.number_of_reads_2 = 0;
+            _encoders.number_of_reads_3 = 0;
         }
+    }
+
+    if (_encoders.read_stage == READING) {
+        _encoders.current_combination.one |= one;
+        _encoders.current_combination.two |= two;
+        _encoders.current_combination.three |= three;
+        _encoders.number_of_reads_1 += (int) one;
+        _encoders.number_of_reads_2 += (int) two;
+        _encoders.number_of_reads_3 += (int) three;
+
+
+        if (abs(_q_encoder.cycle - _encoders.current_combination_start_cycles) > settings_buffer.switch_read_cycles) {
+            _encoders.read_stage = FINISHED;
+        }
+    }
+
+    if (_encoders.read_stage == FINISHED) {
+        encoders.last_combination = _encoders.current_combination;
+
+        if (status_buffer.calibration == CALIBRATION_DONE) {
+            long diff = _q_encoder.cycle - _encoders.current_combination_start_cycles;
+            FixedPosition * current_position = get_position(_encoders.current_combination);
+            encoders.current_azimuth = current_position->azimuth + diff / settings_buffer.cycles_for_degree;
+        }
+
+        if (_encoders.number_of_reads_1 && 
+            _encoders.number_of_reads_1 <= settings_buffer.weak_switch_threshold) {
+            debugln("WEAK SWITCH: 1");
+            debugln(to_string(_encoders.current_combination));
+        }
+        if (_encoders.number_of_reads_2 && 
+            _encoders.number_of_reads_2 <= settings_buffer.weak_switch_threshold) {
+            debugln("WEAK SWITCH: 2");
+            debugln(to_string(_encoders.current_combination));
+        }
+        if (_encoders.number_of_reads_3 &&
+            _encoders.number_of_reads_3 <= settings_buffer.weak_switch_threshold) {
+            debugln("WEAK SWITCH: 3");
+            debugln(to_string(_encoders.current_combination));
+        }
+
+        _encoders.read_stage = NOOP;        
     }
 }
 
