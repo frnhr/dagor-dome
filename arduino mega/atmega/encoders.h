@@ -81,7 +81,7 @@ FixedPosition *get_position(MehanicalCombination comb)
         debugln("position4");
         return &position4;
     }
-    debug("PANIC1111 No FixedPosition matches given MehanicalCombination: ");
+    debug("PANIC !! No FixedPosition matches given MehanicalCombination: ");
     debugln(to_string(comb));
 }
 
