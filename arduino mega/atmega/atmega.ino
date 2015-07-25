@@ -19,7 +19,6 @@ STAUS of this package:
 //TODO make this a define statement
 const bool DEBUG = true; 
 
-
 #include "atmega.h"
 
 
@@ -30,6 +29,8 @@ const bool DEBUG = true;
 void setup() 
 {
     Serial.begin(9600); // serial comm might not work correctly while dome is rotating (interrupts)
+
+    debugln("setup START");
 
     // quadrature inputs (encoder):
     pinMode(quadrature_L, INPUT_PULLUP);
@@ -52,7 +53,6 @@ void setup()
     // motor control:
     pinMode(motor_up, OUTPUT);
     pinMode(motor_down, OUTPUT);
-
     // controller:
     pinMode(controller_up, INPUT_PULLUP);
     digitalWrite(controller_up, HIGH);
@@ -79,6 +79,8 @@ void setup()
 
     debug("Home azimuth: ");
     debugln(to_string(settings_buffer.home_azimuth));
+    debugln("setup END");
+
 } // end setup()
 
 
