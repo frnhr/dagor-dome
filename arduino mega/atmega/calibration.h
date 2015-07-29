@@ -11,8 +11,9 @@ typedef struct {
     unsigned long drift_start_time;
     MehanicalCombination current_combination;
     MehanicalCombination first_combination;
+    int switch_counter;
 } Calibration;
-Calibration EMPTY_CALIBRATION = {NOOP, 0, EMPTY_COMBINATION, EMPTY_COMBINATION};
+Calibration EMPTY_CALIBRATION = {NOOP, 0, EMPTY_COMBINATION, EMPTY_COMBINATION, 0};
 Calibration calibration = EMPTY_CALIBRATION;
 
 

@@ -43,6 +43,7 @@ void status_loop()
     if (input_buffer.start_calibration) {
         status_buffer.calibration = CALIBRATION_IN_PROGRESS;
         status_buffer.rotation = DOWN;
+        calibration = EMPTY_CALIBRATION;
     }
     
     if (calibration.stage == DRIFT) {

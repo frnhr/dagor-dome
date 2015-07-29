@@ -34,12 +34,12 @@ void calibration_loop()
                    calibration.current_combination == calibration.first_combination) {
             FixedPosition * first_position = get_position(calibration.first_combination);
             FixedPosition * last_position = get_position(encoders.last_combination);
-            settings_buffer.cycles_for_degree = abs((last_position->cycles - first_position->cycles) / 360);
+            settings_buffer.cycles_for_degree = abs(( _q_encoder.cycle - first_position->cycles) / 360.0);
             
             _q_encoder.cycle = 0;
             calibration.stage = DRIFT;
             calibration.drift_start_time = millis();
-            
+
             position1.azimuth = settings_buffer.home_azimuth + (position1.cycles / settings_buffer.cycles_for_degree);
             position2.azimuth = settings_buffer.home_azimuth + (position2.cycles / settings_buffer.cycles_for_degree);
             position3.azimuth = settings_buffer.home_azimuth + (position3.cycles / settings_buffer.cycles_for_degree);
@@ -51,6 +51,8 @@ void calibration_loop()
         settings_buffer.drift = abs(_q_encoder.cycle / settings_buffer.cycles_for_degree);
         
         calibration = EMPTY_CALIBRATION;
+
+        // TODO breaking interface!
         status_buffer.calibration = CALIBRATION_DONE;
     }
 }
