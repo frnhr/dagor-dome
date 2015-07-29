@@ -76,3 +76,13 @@ int closer_route(double azimuth, double target_azimuth)
     
     return (distance < 180) ? DOWN : UP;
 }
+
+
+void blink_led()
+{
+    _status_internals.blink_counter--;
+    if (_status_internals.blink_counter <= 0) {
+        digitalWrite(led, !digitalRead(led));
+        _status_internals.blink_counter = STATUS_INTERNAL_DEFAULTS.blink_counter;
+    }
+}

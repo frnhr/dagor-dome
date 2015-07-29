@@ -22,6 +22,12 @@ typedef struct {
 StatusBuffer status_buffer = {STOP, NOOP, NULL_AZIMUTH, NULL_AZIMUTH, NOT_CALIBRATED};
 
 
+typedef struct {
+	int blink_counter; 
+} StatusInternal;
+StatusInternal STATUS_INTERNAL_DEFAULTS = {300};
+StatusInternal _status_internals = STATUS_INTERNAL_DEFAULTS;
+
 
 /***** PROTOTYPES *****/
 
@@ -29,3 +35,5 @@ void status_loop();
 
 void cancel_calibration();
 int closer_route(double azimuth, double target_azimuth);
+
+void blink_led();

@@ -130,6 +130,7 @@ void input_loop()
  */
 void hardware_loop()
 {
+    blink_led();
     motors_loop();    
     door_loop();
 }
