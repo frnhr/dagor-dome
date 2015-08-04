@@ -23,12 +23,12 @@ typedef struct {
     unsigned long minimal_spindown_time;  // minimal time after rotation is done to allow new rotation
     unsigned long controller_plug_in_timeout;    // controller will become responsive after this ammount of time
     unsigned long spindown_drift_time;    // minimal time after rotation is done to measure drift
-    unsigned long switch_read_cycles;    // switch reading length
+    int switch_read_cycles;    // switch reading length
     int deadzone_movement;      // minimal movement allowed in degrees
     double drift;               // measured drift in degrees
     int weak_switch_threshold;
 } Settings;
-Settings settings_buffer = {HOME_AZIMUTH, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 128, 5, 0, 4};
+Settings settings_buffer = {HOME_AZIMUTH, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 200, 5, 0, 4};
 
 
 

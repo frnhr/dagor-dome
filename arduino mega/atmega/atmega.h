@@ -66,20 +66,3 @@ typedef struct {
 InputBuffer INPUT_BUFFER_DEFAULTS = {NOOP, NOOP, NULL_AZIMUTH, false, false};
 InputBuffer input_buffer = INPUT_BUFFER_DEFAULTS;
 
-
-// utility functions:
-
-/*
- * Make sure argument is within [0, 360) range
- */
-double map_to_circle(double azimuth) {
-    while(azimuth < 0) {
-        azimuth += 360;
-    }
-    while(azimuth >= 360) {
-        azimuth -= 360;
-    }
-    return azimuth;
-}
-
-

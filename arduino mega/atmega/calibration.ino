@@ -27,13 +27,14 @@ void calibration_loop()
             FixedPosition *current_position = get_position(EMPTY_COMBINATION);
             // ... populate its combination
             current_position->combination = calibration.current_combination;
-            //TODO here we break interfaces:r
+            //TODO here we break interfaces:
             current_position->cycles = _q_encoder.cycle - settings_buffer.switch_read_cycles;
         }
         
         if (calibration.stage == HOME_OFFSET) {
             calibration.first_combination = calibration.current_combination;
             calibration.stage = POSITIONS;
+
         } else if (calibration.stage == POSITIONS && 
                    calibration.current_combination == calibration.first_combination) {
             FixedPosition * first_position = get_position(calibration.first_combination);
@@ -49,18 +50,11 @@ void calibration_loop()
             position3.azimuth = map_to_circle(settings_buffer.home_azimuth + (position3.cycles / settings_buffer.cycles_for_degree));
             position4.azimuth = map_to_circle(settings_buffer.home_azimuth + (position4.cycles / settings_buffer.cycles_for_degree));
 
-            //debugln("Current azimuth:");
-            //debugln(String(position1.azimuth + (settings_buffer.switch_read_cycles / settings_buffer.cycles_for_degree)));
             debugln("Switch azimuths:");
             debugln(String(position1.azimuth));
             debugln(String(position2.azimuth));
             debugln(String(position3.azimuth));
             debugln(String(position4.azimuth));
-            debugln("Switch cycles:");
-            debugln(String(position1.cycles));
-            debugln(String(position2.cycles));
-            debugln(String(position3.cycles));
-            debugln(String(position4.cycles));
         }
     }
     
