@@ -84,5 +84,6 @@ void blink_led()
     if (_status_internals.blink_counter <= 0) {
         digitalWrite(led, !digitalRead(led));
         _status_internals.blink_counter = STATUS_INTERNAL_DEFAULTS.blink_counter;
+        debugln(String(_q_encoder.cycle));
     }
 }

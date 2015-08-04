@@ -17,6 +17,7 @@ void serial_loop()
         // status buffer:
         if (_serial.data_received == "status") {
             Serial.println("ok 3");
+            debugln(String(_q_encoder.cycle));
             Serial.println(status_buffer.current_azimuth);
             Serial.println(status_buffer.rotation);
             Serial.println(status_buffer.calibration);
