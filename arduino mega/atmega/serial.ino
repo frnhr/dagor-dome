@@ -49,7 +49,7 @@ void serial_loop()
         } else if (_serial.data_received == "dt") {  // stop door
             Serial.println("ok 0");
             input_buffer.doors = DOORS_STOP;
-        } else if (_serial.data_received == "hs" && _serial_calibration_check()) {  // set home at current position
+        } else if (_serial.data_received == "set_as_home") {  // set current azimuth as home position
             Serial.println("ok 0");
             EEPROM_write_home(status_buffer.current_azimuth);
         } else if (_serial.data_received == "calibrate")  {   // calibration start
@@ -71,6 +71,7 @@ void serial_loop()
             data.toCharArray(buf, data.length() + 1);
             double value = atof(buf);
             status_buffer.current_azimuth = value;
+            encoders.current_azimuth = value;
         } else {
             Serial.println("error 1");
             Serial.print("unknown command: ");
