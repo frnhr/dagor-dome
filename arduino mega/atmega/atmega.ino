@@ -78,7 +78,7 @@ void setup()
     settings_buffer.home_azimuth = EEPROM_read_home(); // read home from EEPROM
 
     debug("Home azimuth: ");
-    debugln(to_string(settings_buffer.home_azimuth));
+    debugln(String(settings_buffer.home_azimuth));
     debugln("setup END");
 
 } // end setup()

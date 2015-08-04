@@ -8,7 +8,6 @@ void encoder_loop()
     if ((_q_encoder.last_cycle != _q_encoder.cycle) && (status_buffer.calibration == CALIBRATION_DONE)) {
         encoders.current_azimuth += (_q_encoder.cycle - _q_encoder.last_cycle) / settings_buffer.cycles_for_degree;
         encoders.current_azimuth = map_to_circle(encoders.current_azimuth);
-
         _q_encoder.last_cycle = _q_encoder.cycle;
     }
     
