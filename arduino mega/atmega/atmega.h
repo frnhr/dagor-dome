@@ -72,7 +72,7 @@ InputBuffer input_buffer = INPUT_BUFFER_DEFAULTS;
 /*
  * Make sure argument is within [0, 360) range
  */
-int map_to_circle(double azimuth) {
+double map_to_circle(double azimuth) {
     while(azimuth < 0) {
         azimuth += 360;
     }
