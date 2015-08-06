@@ -62,12 +62,14 @@ void calibration_loop()
         settings_buffer.drift = abs(_q_encoder.cycle / settings_buffer.cycles_for_degree);
         
         // TODO breaking interfaces!
-        encoders.current_azimuth = position1.azimuth + settings_buffer.switch_read_cycles +settings_buffer.drift;
+        encoders.current_azimuth = position1.azimuth + settings_buffer.switch_read_cycles/settings_buffer.cycles_for_degree + settings_buffer.drift;
 
         debugln("DRIFT:");
         debugln(String(settings_buffer.drift));
 
         calibration = EMPTY_CALIBRATION;
+
+        EEPROM_write_calibration();
 
         // TODO breaking interface!
         status_buffer.calibration = CALIBRATION_DONE;

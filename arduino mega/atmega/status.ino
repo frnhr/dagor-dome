@@ -81,9 +81,15 @@ int closer_route(double azimuth, double target_azimuth)
 void blink_led()
 {
     _status_internals.blink_counter--;
+
     if (_status_internals.blink_counter <= 0) {
         digitalWrite(led, !digitalRead(led));
         _status_internals.blink_counter = STATUS_INTERNAL_DEFAULTS.blink_counter;
-        debugln(String(_q_encoder.cycle));
+
+        if (status_buffer.calibration == CALIBRATION_DONE) {
+            debugln(String(encoders.current_azimuth));
+        } else {
+            debugln(String(_q_encoder.cycle));
+        }
     }
 }

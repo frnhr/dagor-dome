@@ -52,10 +52,13 @@ void serial_loop()
             input_buffer.doors = DOORS_STOP;
         } else if (_serial.data_received == "set_as_home") {  // set current azimuth as home position
             Serial.println("ok 0");
-            EEPROM_write_home(status_buffer.current_azimuth);
+            EEPROM_write_home();
         } else if (_serial.data_received == "calibrate")  {   // calibration start
             Serial.println("ok 0");
             input_buffer.start_calibration = true;
+        }  else if (_serial.data_received == "read_calibration")  {   // read calibration from EEPROM
+            Serial.println("ok 0");
+            EEPROM_read_calibration();
         } else if (_serial.data_received == "stop") {   // stop rotation manually
             Serial.println("ok 0");
             input_buffer.stop = true;
@@ -84,12 +87,13 @@ void serial_loop()
     }
 }
 
-bool _serial_calibration_check() {
-    if (status_buffer.calibration != CALIBRATION_DONE)
-    {
+bool _serial_calibration_check()
+{
+    if (status_buffer.calibration != CALIBRATION_DONE) {
         Serial.println("error 1");
         Serial.println("ec");
         return false;
     }
+    
     return true;
 }

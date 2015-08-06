@@ -1,35 +1,82 @@
 #include <EEPROM.h>
 
-//TODO home_position should not be in EEPROM, but in settings.h instead, as a text config
+/*
+0-4     home azimuth
+4-8     cycles for degree
+8-12    drift
+12-23   position 1
+23-34   position 2
+34-45   position 3
+45-56   position 4
+*/
 
-//TODO settings (or calibration?)  should be written to EEPROM and restored on restart
 
+// HOME POSITION
 
-double EEPROM_read_home()
+void EEPROM_read_home()
 {
-    String buffer = "";
-    for (int i = 0; i < 4; i++)
-    {
-        buffer += EEPROM.read(i);
-    }
-
-    char buf[buffer.length()];
-    buffer.toCharArray(buf, buffer.length());
-    return (double)atof(buf);
+    settings_buffer.home_azimuth = _EEPROM_read_double(0);
 }
 
-void EEPROM_write_home(double value)
+void EEPROM_write_home()
 {
-    int values[4];
-    values[0] = (int)(value / 100);
-    values[1] = (int)((value / 10) - (values[0] * 10));
-    values[2] = (int)(value - (values[0] * 100) - (values[1] * 10));
-    values[3] = (int)((value * 10) - (values[0] * 1000) - (values[1] * 100) - (values[2] * 10));
-
-    for (int i = 0; i < 4; i++)
-    {
-        EEPROM.write(i, values[i]);
-    }
-
-    settings_buffer.home_azimuth = value;
+    _EEPROM_write_double(settings_buffer.home_azimuth, 0);
 }
+
+
+// CALIBRATION
+
+void EEPROM_read_calibration()
+{
+    settings_buffer.cycles_for_degree = _EEPROM_read_double(4);
+    settings_buffer.drift = _EEPROM_read_double(8);
+    position1 = _EEPROM_read_position(12);
+    position2 = _EEPROM_read_position(23);
+    position3 = _EEPROM_read_position(34);
+    position4 = _EEPROM_read_position(45);
+
+    // TODO breaking interface!
+    calibration = EMPTY_CALIBRATION;
+    status_buffer.calibration = CALIBRATION_DONE;
+}
+
+void EEPROM_write_calibration()
+{
+    _EEPROM_write_double(settings_buffer.cycles_for_degree, 4);
+    _EEPROM_write_double(settings_buffer.drift, 8);
+    _EEPROM_write_position(position1, 12);
+    _EEPROM_write_position(position2, 23);
+    _EEPROM_write_position(position3, 34);
+    _EEPROM_write_position(position4, 45);
+}
+
+
+// INTERNALS
+
+void _EEPROM_write_double(double d, int addr)
+{
+    EEPROM.put(addr, d);
+}
+
+double _EEPROM_read_double(int addr)
+{
+    double d = 0.0;
+    EEPROM.get(addr, d);
+
+    return d;
+}
+
+void _EEPROM_write_position(FixedPosition pos, int addr)
+{
+    EEPROM.put(addr, pos);
+}
+
+FixedPosition _EEPROM_read_position(int addr)
+{
+    FixedPosition pos;
+    EEPROM.get(addr, pos);
+
+    return pos;
+}
+
+

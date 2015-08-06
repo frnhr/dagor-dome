@@ -16,8 +16,7 @@ STAUS of this package:
 
 
 // prints additional information over serial
-//TODO make this a define statement
-const bool DEBUG = true; 
+#define DEBUG true
 
 #include "atmega.h"
 
@@ -75,7 +74,7 @@ void setup()
     pinMode(do_close_pin, OUTPUT);
     digitalWrite(do_close_pin, HIGH);
 
-    settings_buffer.home_azimuth = EEPROM_read_home(); // read home from EEPROM
+    EEPROM_read_home(); // read home from EEPROM
 
     debug("Home azimuth: ");
     debugln(String(settings_buffer.home_azimuth));

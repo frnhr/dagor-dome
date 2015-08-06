@@ -1,8 +1,6 @@
 
 void encoder_loop()
 {    
-    //TODO move from storing azimuth to storing cycles in encoder_buffer
-
     // _q_encoder:
     // update _q_encoder.last_cycle and encoders.current_azimuth
     if ((_q_encoder.last_cycle != _q_encoder.cycle) && (status_buffer.calibration == CALIBRATION_DONE)) {

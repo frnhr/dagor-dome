@@ -1,8 +1,8 @@
 
-
-//TODO get rid of these
-const int STOP = 0;
-const int CALIBRATION_IN_PROGRESS = 0, CALIBRATION_DONE = 1, NOT_CALIBRATED = -1;
+#define STOP 0
+#define CALIBRATION_IN_PROGRESS 0
+#define CALIBRATION_DONE 1
+#define NOT_CALIBRATED -1
 
 
 
@@ -25,7 +25,7 @@ StatusBuffer status_buffer = {STOP, NOOP, NULL_AZIMUTH, NULL_AZIMUTH, NOT_CALIBR
 typedef struct {
 	int blink_counter; 
 } StatusInternal;
-StatusInternal STATUS_INTERNAL_DEFAULTS = {300};
+StatusInternal STATUS_INTERNAL_DEFAULTS = {600};
 StatusInternal _status_internals = STATUS_INTERNAL_DEFAULTS;
 
 

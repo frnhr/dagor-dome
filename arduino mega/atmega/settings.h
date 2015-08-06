@@ -1,5 +1,3 @@
-// dome config
-#define HOME_AZIMUTH 180.0
 
 // dome motors config
 #define MIN_SPINUP_TIME 1500  // milliseconds
@@ -23,12 +21,12 @@ typedef struct {
     unsigned long minimal_spindown_time;  // minimal time after rotation is done to allow new rotation
     unsigned long controller_plug_in_timeout;    // controller will become responsive after this ammount of time
     unsigned long spindown_drift_time;    // minimal time after rotation is done to measure drift
-    int switch_read_cycles;    // switch reading length
+    long switch_read_cycles;    // switch reading length
     int deadzone_movement;      // minimal movement allowed in degrees
     double drift;               // measured drift in degrees
     int weak_switch_threshold;
 } Settings;
-Settings settings_buffer = {HOME_AZIMUTH, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 200, 5, 0, 4};
+Settings settings_buffer = {183, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 128, 5, 0, 4};
 
 
 
@@ -36,5 +34,15 @@ Settings settings_buffer = {HOME_AZIMUTH, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME,
 
 /***** PROTOTYPES *****/
 
-double EEPROM_read_home();
-void EEPROM_write_home(double value);
+void EEPROM_read_home();
+void EEPROM_write_home();
+
+void EEPROM_read_calibration();
+void EEPROM_write_calibration();
+
+void _EEPROM_write_double(double d, int addr);
+double _EEPROM_read_double(int addr);
+void _EEPROM_write_position(FixedPosition pos, int addr);
+FixedPosition _EEPROM_read_position(int addr);
+
+

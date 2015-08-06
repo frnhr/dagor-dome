@@ -103,8 +103,8 @@ Encoders encoders = {NULL_AZIMUTH, EMPTY_COMBINATION};
 
 
 /***** INTERNALS *****/
-// TODO make these as enum?
-const int READING = 1, FINISHED = 2;
+#define READING 1
+#define FINISHED 2
 
 typedef struct {
     MehanicalCombination current_combination;

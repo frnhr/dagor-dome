@@ -1,6 +1,7 @@
 
-//TODO get rid of these 
-const int HOME_OFFSET = 1, POSITIONS = 2, DRIFT = 3;
+#define HOME_OFFSET 1
+#define POSITIONS 2
+#define DRIFT 3
 
 
 
