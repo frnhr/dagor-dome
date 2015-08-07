@@ -44,7 +44,7 @@ const int is_closed_pin = 53; // unused
 
 const int switch_one = A4; // 1st mehanical switch
 const int switch_two = A5; // 2nd mehanical switch
-const int switch_three = A7; // 3rd mehanical switch
+const int switch_three = A6; // 3rd mehanical switch
 
 const int led = 13;
 

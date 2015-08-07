@@ -25,7 +25,7 @@ StatusBuffer status_buffer = {STOP, NOOP, NULL_AZIMUTH, NULL_AZIMUTH, NOT_CALIBR
 typedef struct {
 	int blink_counter; 
 } StatusInternal;
-StatusInternal STATUS_INTERNAL_DEFAULTS = {600};
+StatusInternal STATUS_INTERNAL_DEFAULTS = {1500};
 StatusInternal _status_internals = STATUS_INTERNAL_DEFAULTS;
 
 

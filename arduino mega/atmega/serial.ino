@@ -52,6 +52,7 @@ void serial_loop()
             input_buffer.doors = DOORS_STOP;
         } else if (_serial.data_received == "set_as_home") {  // set current azimuth as home position
             Serial.println("ok 0");
+            settings_buffer.home_azimuth = encoders.current_azimuth;
             EEPROM_write_home();
         } else if (_serial.data_received == "calibrate")  {   // calibration start
             Serial.println("ok 0");

@@ -87,6 +87,8 @@ void blink_led()
         _status_internals.blink_counter = STATUS_INTERNAL_DEFAULTS.blink_counter;
 
         if (status_buffer.calibration == CALIBRATION_DONE) {
+            debug(String(_q_encoder.cycle));
+            debug("\t");
             debugln(String(encoders.current_azimuth));
         } else {
             debugln(String(_q_encoder.cycle));

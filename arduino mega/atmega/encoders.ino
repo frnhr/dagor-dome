@@ -42,7 +42,7 @@ void encoder_loop()
         _encoders.number_of_reads_3 += (int) three;
 
 
-        if (abs(_q_encoder.cycle - _encoders.current_combination_start_cycles) > settings_buffer.switch_read_cycles) {
+        if (abs(_q_encoder.cycle - _encoders.current_combination_start_cycles) >= settings_buffer.switch_read_cycles) {
             _encoders.read_stage = FINISHED;
         }
     }
@@ -53,7 +53,13 @@ void encoder_loop()
         if (status_buffer.calibration == CALIBRATION_DONE) {
             long diff = _q_encoder.cycle - _encoders.current_combination_start_cycles;
             FixedPosition * current_position = get_position(_encoders.current_combination);
-            encoders.current_azimuth = current_position->azimuth + diff / settings_buffer.cycles_for_degree;
+            //encoders.current_azimuth = current_position->azimuth + diff / settings_buffer.cycles_for_degree;
+
+            debugln("_q_encoder.cycle:");
+            debugln(String(_q_encoder.cycle));
+
+            debugln("current_position->azimuth + diff / settings_buffer.cycles_for_degree:");
+            debugln(String(current_position->azimuth + diff / settings_buffer.cycles_for_degree));
         }
 
         if (_encoders.number_of_reads_1 && 
@@ -93,10 +99,10 @@ int count_quadrature(int value)
     }
 
     if (_q_encoder.QE_code == 1) {
-        value++;
+        value--;
     }
     if (_q_encoder.QE_code == 2) {
-        value--;
+        value++;
     }
 
     return value;

@@ -26,7 +26,18 @@ typedef struct {
     double drift;               // measured drift in degrees
     int weak_switch_threshold;
 } Settings;
-Settings settings_buffer = {183, 0, MIN_SPINUP_TIME, MIN_SPINDOWN_TIME, 5000, 5000, 128, 5, 0, 4};
+Settings settings_buffer = {
+    0,                  // home_azimuth
+    0,                  // cycles_for_degree
+    MIN_SPINUP_TIME,    // minimal_spinup_time
+    MIN_SPINDOWN_TIME,  // minimal_spindown_time
+    5000,               // controller_plug_in_timeout
+    5000,               // spindown_drift_time
+    100,                // switch_read_cycles
+    5,                  // deadzone_movement
+    0,                  // drift
+    4,                  // weak_switch_threshold
+};
 
 
 
