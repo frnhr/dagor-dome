@@ -2,7 +2,7 @@
 
 Usage:
     dome.py status [-v | --verbose]
-    dome.py calibration [-r | --reset]
+    dome.py calibrate [-r | --reset]
     dome.py goto <azimuth>
     dome.py azimuth set <azimuth>
     dome.py azimuth get
@@ -16,7 +16,7 @@ Usage:
 
 Commands:
     status         Dome status (azimuth \\n rotating or not \\n calibrated, during calibration or uncalibrated)
-    calibration    Start calibration.
+    calibrate      Start calibration.
     goto           Move dome to specified azimuth.
     azimuth set    Set current position as specified azimuth.
     azimuth get    Get current azimuth.
@@ -30,12 +30,13 @@ Commands:
     reset          Reset Arduino.
 
 Options:
-    -h --help      Show this screen or description of specific command.
+    -h --help      Show this screen.
     --version      Show version."""
   
 from docopt import docopt
 import serial
 import sys
+from os import system
 import dome_config
 
 
@@ -63,7 +64,7 @@ def _main(args):
     ser.port = dome_config.PORT
     ser.baudrate = dome_config.BAUDRATE
     ser.timeout = dome_config.TIMEOUT
-    ser.setDTR(args['-r'] or args['--reset'] or args['reset']); #don't reset unless explicitly specified
+
     ser.open()
     
     if args['status']:
@@ -75,12 +76,12 @@ def _main(args):
             print 'Calibration: ' + {'0': 'In progress', '1': 'Done', '-1': 'Not calibrated'}[calibration]
         else:
             print '|'.join(reply)
-    elif args['calibration']:
-        write_serial(ser, 'cs\n')
+    elif args['calibrate']:
+        write_serial(ser, 'calibrate\n')
     elif args['goto']:
-        write_serial(ser, 'ds' + args['<azimuth>']);
+        write_serial(ser, 'ds' + args['<azimuth>'])
     elif args['azimuth'] and args['set']:
-        write_serial(ser, 'force' + args['<azimuth>']);
+        write_serial(ser, 'force' + args['<azimuth>'])
     elif args['azimuth'] and args['get']:
         print '\n'.join(write_serial(ser, 'dg'))
     elif args['park']:

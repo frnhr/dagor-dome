@@ -33,7 +33,7 @@ Settings settings_buffer = {
     MIN_SPINDOWN_TIME,  // minimal_spindown_time
     5000,               // controller_plug_in_timeout
     5000,               // spindown_drift_time
-    100,                // switch_read_cycles
+    15,                 // switch_read_cycles
     5,                  // deadzone_movement
     0,                  // drift
     4,                  // weak_switch_threshold

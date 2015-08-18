@@ -1,3 +1,3 @@
-PORT = "COM5"
+PORT = "/dev/ttyACM0"
 BAUDRATE = 9600
 TIMEOUT = 2

@@ -16,7 +16,7 @@ STAUS of this package:
 
 
 // prints additional information over serial
-#define DEBUG true
+#define DEBUG false
 
 #include "atmega.h"
 
