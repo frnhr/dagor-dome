@@ -25,3 +25,4 @@ stino.settings
 dagor-dome.sublime-workspace
 /.project
 /.pydevproject
+*.pyc
