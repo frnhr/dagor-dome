@@ -21,33 +21,33 @@ void serial_loop()
             Serial.println(status_buffer.current_azimuth);
             Serial.println(status_buffer.rotation);
             Serial.println(status_buffer.calibration);
-        } else if (_serial.data_received == "hg") {  // get home
+        } else if (_serial.data_received == "home_azimuth") {  // return home azimuth
             Serial.println("ok 1");
             Serial.println(settings_buffer.home_azimuth);
-        } else if (_serial.data_received == "dg" && _serial_calibration_check()) {  // get azimuth
+        } else if (_serial.data_received == "current_azimuth" && _serial_calibration_check()) {  // return current azimuth
             Serial.println("ok 1");
             Serial.println(status_buffer.current_azimuth);
         }
         
         // input buffer:
-        else if (_serial.data_received.substring(0, 2) == "ds" && _serial_calibration_check()) {  // go to defined azimuth
+        else if (_serial.data_received.substring(0, 4) == "goto" && _serial_calibration_check()) {  // go to defined azimuth
             Serial.println("ok 0");
-            String data = _serial.data_received.substring(2);
+            String data = _serial.data_received.substring(4);
             char buf[data.length() + 1];
             data.toCharArray(buf, data.length() + 1);
             double value = atof(buf);
             
             input_buffer.target_azimuth = value;
-        } else if (_serial.data_received == "dp" && _serial_calibration_check()) {  // park dome
+        } else if (_serial.data_received == "park" && _serial_calibration_check()) {  // park dome
             Serial.println("ok 0");
             input_buffer.target_azimuth = settings_buffer.home_azimuth;
-        } else if (_serial.data_received == "do") {  // open door
+        } else if (_serial.data_received == "door_open") {  // open door
             Serial.println("ok 0");
             input_buffer.doors = OPEN;
-        } else if (_serial.data_received == "dc") {  // close door
+        } else if (_serial.data_received == "door_close") {  // close door
             Serial.println("ok 0");
             input_buffer.doors = CLOSE;
-        } else if (_serial.data_received == "dt") {  // stop door
+        } else if (_serial.data_received == "door_stop") {  // stop door
             Serial.println("ok 0");
             input_buffer.doors = DOORS_STOP;
         } else if (_serial.data_received == "set_as_home") {  // set current azimuth as home position

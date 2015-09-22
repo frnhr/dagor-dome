@@ -1,4 +1,4 @@
-"""Dagor dome rotation interface version 1.0.
+"""Dagor dome rotation interface version 1.1.
 
 Usage:
     dome.py status [-v | --verbose]
@@ -7,7 +7,7 @@ Usage:
     dome.py azimuth set <azimuth>
     dome.py azimuth get
     dome.py park
-    dome.py door (open|close)
+    dome.py door (open|close|stop)
     dome.py home (set|get)
     dome.py (up|down|stop)
     dome.py reset
@@ -31,7 +31,8 @@ Commands:
 
 Options:
     -h --help      Show this screen.
-    --version      Show version."""
+    --version      Show version.
+"""
   
 from docopt import docopt
 import serial
@@ -41,11 +42,19 @@ import dome_config
 
 
 def read_serial(ser):
+    """ Read data from serial port. Raise exception if error code is returned.
+    
+    @param ser: PySerial Serial() object
+    @return: Returned data
+    """
+    
     raw_reply = ser.readline().strip()
+    
     try:
         status, lines = raw_reply.split(' ')
     except ValueError:
         status, lines = (raw_reply, 0)
+    
     reply = [ser.readline().strip() for _ in range(int(lines))]
     
     if status=='ok':
@@ -55,6 +64,13 @@ def read_serial(ser):
 
 
 def write_serial(ser, str):
+    """ Write to serial port, and then parse return message.
+    
+    @param ser: PySerial Serial() object
+    @param str: String to be sent.
+    @return: Parsed return message.
+    """
+    
     ser.write(str + '\n')
     return read_serial(ser)
     
@@ -79,39 +95,53 @@ def _main(args):
     elif args['calibrate']:
         write_serial(ser, 'calibrate\n')
     elif args['goto']:
-        write_serial(ser, 'ds' + args['<azimuth>'])
-    elif args['azimuth'] and args['set']:
-        write_serial(ser, 'force' + args['<azimuth>'])
-    elif args['azimuth'] and args['get']:
-        print '\n'.join(write_serial(ser, 'dg'))
+        write_serial(ser, 'goto' + args['<azimuth>'])
+    elif args['azimuth']:
+        if args['set']:
+            write_serial(ser, 'force' + args['<azimuth>'])
+        elif args['get']:
+            print '\n'.join(write_serial(ser, 'current_azimuth'))
+        else:
+            _unknown_command()
     elif args['park']:
-        write_serial(ser, 'dp')
+        write_serial(ser, 'park')
     elif args['door']:
         if args['open']:
-            write_serial(ser, 'do')
+            write_serial(ser, 'door_open')
+        elif args['stop']:
+            write_serial(ser, 'door_stop')
+        elif args['close']:
+            write_serial(ser, 'door_close')
         else:
-            write_serial(ser, 'dc')
+            _unknown_command()
     elif args['home']:
         if args['set']:
-            write_serial(ser, 'hs')
+            write_serial(ser, 'set_as_home')
+        elif args['get']:
+            print '\n'.join(write_serial(ser, 'home_azimuth'))
         else:
-            print '\n'.join(write_serial(ser, 'hg'))
+            _unknown_command()
     elif args['up']:
         write_serial(ser, 'up')
     elif args['down']:
         write_serial(ser, 'down')
     elif args['stop']:
         write_serial(ser, 'stop')
+    else:
+        _unknown_command()
     
     ser.close()
-    sys.exit(0)
-
+    
+def _unknown_command():
+    print __doc__
+    sys.exit(1)
 
 if __name__ == '__main__':
     args = docopt(__doc__, version=__doc__.split('\n'[0]))
     
     try:
         _main(args)
+        sys.exit(0)
     except Exception as e:
         print(e)
         sys.exit(1)
